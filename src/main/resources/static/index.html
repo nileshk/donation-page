@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!--suppress JSUnresolvedLibraryURL -->
+<html>
+<head>
+	<title>Static</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>
+	<!--<link rel="stylesheet" href="styles.css">-->
+</head>
+<body>
+
+<script src="https://checkout.stripe.com/checkout.js"></script>
+
+<div class="container">
+	<h1 id="testWarning"></h1>
+	<p>Donate:</p>
+	<button id="donateButton_5">$5</button>
+	<button id="donateButton_10">$10</button>
+	<button id="donateButton_25">$25</button>
+	<button id="donateButton_50">$50</button>
+	<button id="donateButton_100">$100</button>
+	<br/>
+	<br/>
+	<p>Or, donate a specific amount:</p>
+	<form>
+		<fieldset class="form-group">
+			<div class="input-group">
+				<span class="input-group-addon">$</span>
+				<input type="number" class="form-control" id="donationAmount" name="amount" placeholder="Enter amount" style="width:150px">
+			</div>
+		</fieldset>
+		<button id="donateButton_custom">Donate</button>
+	</form>
+
+</div>
+
+<script type="text/javascript" src="webjars/jquery/2.0.3/jquery.min.js"></script>
+
+<script>
+	function init(publishableKey) {
+		var submittedAmount = 0;
+
+		var handler = StripeCheckout.configure({
+			key: publishableKey,
+			image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+			locale: 'auto',
+			currency: 'usd',
+			token: function(token) {
+				// You can access the token ID with `token.id`.
+				// Get the token ID to your server-side code for use.
+				var param = {
+					id: token.id,
+					currency: 'usd',
+					amount: submittedAmount,
+					description: token.email,
+					token: token
+				};
+				// console.log(param);
+				$.ajax({
+					type: 'POST',
+					url: '/submitPayment',
+					data: JSON.stringify(param),
+					contentType: "application/json",
+					dataType: 'json'
+				});
+			}
+		});
+
+		function handleDonate(amount, amountStr) {
+			// Open Checkout with further options:
+			submittedAmount = amount;
+			handler.open({
+				name: 'Jessica Vaughn',
+				description: 'Donate $' + amountStr,
+				amount: amount
+			});
+		}
+
+		document.getElementById('donateButton_custom').addEventListener('click', function(e) {
+			var amount = document.getElementById("donationAmount").value;
+			handleDonate(parseInt(amount) * 100, amount);
+			e.preventDefault();
+		});
+
+		document.getElementById('donateButton_5').addEventListener('click', function(e) {
+			handleDonate(500, "5");
+			e.preventDefault();
+		});
+
+		document.getElementById('donateButton_10').addEventListener('click', function(e) {
+			handleDonate(1000, "10");
+			e.preventDefault();
+		});
+
+		document.getElementById('donateButton_25').addEventListener('click', function(e) {
+			handleDonate(2500, "25");
+			e.preventDefault();
+		});
+
+		document.getElementById('donateButton_50').addEventListener('click', function(e) {
+			handleDonate(5000, "50");
+			e.preventDefault();
+		});
+
+		document.getElementById('donateButton_100').addEventListener('click', function(e) {
+			handleDonate(10000, "100");
+			e.preventDefault();
+		});
+
+		// Close Checkout on page navigation:
+		window.addEventListener('popstate', function() {
+			handler.close();
+		});
+	}
+	$(document).ready(function() {
+		$.ajax({
+			type: 'GET',
+			url: '/getPublishableKey',
+			contentType: "application/json",
+			dataType: 'json',
+			success: function(data) {
+				//console.log(data);
+				if (data.startsWith("pk_test")) {
+					console.log("TEST MODE");
+					$('#testWarning').text("TEST MODE - No money will be transferred");
+				}
+				init(data);
+			},
+			error: function(x, textStatus, errorThrown) {
+				console.log("textStatus: " + textStatus);
+				console.log("errorThrown: " + errorThrown);
+			}
+		});
+	});
+
+</script>
+
+<script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</body>
+</html>

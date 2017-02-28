@@ -1,0 +1,14 @@
+{
+  "properties": [
+    {
+      "name": "stripe.secretKey",
+      "type": "java.lang.String",
+      "description": "Stripe Secret Key"
+    },
+    {
+      "name": "stripe.publishableKey",
+      "type": "java.lang.String",
+      "description": "Stripe Publishable Key"
+    }
+  ]
+}
