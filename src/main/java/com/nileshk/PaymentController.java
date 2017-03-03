@@ -12,8 +12,10 @@ import com.stripe.model.Charge;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
@@ -47,7 +49,7 @@ public class PaymentController {
 			produces = MediaType.APPLICATION_JSON_VALUE
 	)
 	@ResponseBody
-	public Json submitPayment(
+	public ChargeResult submitPayment(
 			@RequestBody Map<String, Object> param
 	) {
 		Map<String, Object> clientParam = new HashMap<>();
@@ -57,9 +59,7 @@ public class PaymentController {
 		clientParam.put("card", param.get("id"));
 		try {
 			Charge chargeResult = Charge.create(clientParam);
-			String chargeResultJson = chargeResult.toJson();
-			System.out.println(chargeResultJson);
-			return new Json(chargeResultJson);
+			return new ChargeResult(chargeResult);
 		} catch (AuthenticationException e) {
 			e.printStackTrace();
 		} catch (InvalidRequestException e) {
@@ -72,6 +72,16 @@ public class PaymentController {
 			e.printStackTrace();
 		}
 		return null; // TODO error response
+	}
+
+	@RequestMapping(value = "/successfulPayment", method = GET)
+	public String successfulPayment(
+			@RequestParam(value = "amount", required = true) Long amount,
+			@RequestParam(value = "email", required = false) String email,
+			Model model) {
+		model.addAttribute("amount", String.valueOf(amount / 100));
+		model.addAttribute("email", email);
+		return "successful_payment";
 	}
 
 	class Json {

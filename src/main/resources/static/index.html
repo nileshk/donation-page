@@ -37,6 +37,8 @@
 <script type="text/javascript" src="webjars/jquery/2.0.3/jquery.min.js"></script>
 
 <script>
+	"use strict";
+
 	function init(publishableKey) {
 		var submittedAmount = 0;
 
@@ -61,7 +63,11 @@
 					url: 'submitPayment',
 					data: JSON.stringify(param),
 					contentType: "application/json",
-					dataType: 'json'
+					dataType: 'json',
+					success: function(data) {
+						console.log(data);
+						window.location = "successfulPayment?amount=" + data.amount + "&email=" + data.email;
+					}
 				});
 			}
 		});

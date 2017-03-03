@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<!--suppress JSUnresolvedLibraryURL -->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Static</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>
+	<!--<link rel="stylesheet" href="styles.css">-->
+</head>
+<body>
+<div class="container">
+	<h2>Thank you for your contribution!</h2>
+	<!--/*@thymesVar id="amount" type="string"*/-->
+	<p th:text="'Your contribution of $' + ${amount} + ' has been received.'"/>
+	<!--/*@thymesVar id="email" type="string"*/-->
+	<p th:text="${email}"/>
+</div>
+
+<script type="text/javascript" src="webjars/jquery/2.0.3/jquery.min.js"></script>
+<script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>
