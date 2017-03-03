@@ -58,7 +58,7 @@
 				// console.log(param);
 				$.ajax({
 					type: 'POST',
-					url: '/submitPayment',
+					url: 'submitPayment',
 					data: JSON.stringify(param),
 					contentType: "application/json",
 					dataType: 'json'
@@ -115,7 +115,7 @@
 	$(document).ready(function() {
 		$.ajax({
 			type: 'GET',
-			url: '/getPublishableKey',
+			url: 'getPublishableKey',
 			contentType: "application/json",
 			dataType: 'json',
 			success: function(data) {
