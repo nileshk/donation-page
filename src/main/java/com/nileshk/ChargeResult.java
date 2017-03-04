@@ -6,10 +6,12 @@ import java.io.Serializable;
 
 public class ChargeResult implements Serializable {
 
-	private static final long serialVersionUID = 1666695160039191687L;
+	private static final long serialVersionUID = 1397303362248480911L;
 
 	private Long amount;
 	private String email;
+	private boolean error = false;
+	private String errorMessage;
 
 	public ChargeResult() {
 	}
@@ -19,6 +21,13 @@ public class ChargeResult implements Serializable {
 			amount = charge.getAmount();
 			email = charge.getDescription();
 		}
+	}
+
+	public static ChargeResult error(String errorMessage) {
+		ChargeResult result = new ChargeResult();
+		result.setError(true);
+		result.setErrorMessage(errorMessage);
+		return result;
 	}
 
 	public Long getAmount() {
@@ -35,5 +44,21 @@ public class ChargeResult implements Serializable {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public boolean isError() {
+		return error;
+	}
+
+	public void setError(boolean error) {
+		this.error = error;
+	}
+
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
+	public void setErrorMessage(String errorMessage) {
+		this.errorMessage = errorMessage;
 	}
 }

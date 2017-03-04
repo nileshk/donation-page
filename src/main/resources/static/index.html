@@ -10,27 +10,50 @@
 <body>
 
 <script src="https://checkout.stripe.com/checkout.js"></script>
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 
 <div class="container">
-	<h1 id="testWarning"></h1>
-	<p>Donate:</p>
-	<button id="donateButton_5">$5</button>
-	<button id="donateButton_10">$10</button>
-	<button id="donateButton_25">$25</button>
-	<button id="donateButton_50">$50</button>
-	<button id="donateButton_100">$100</button>
-	<br/>
-	<br/>
-	<p>Or, donate a specific amount:</p>
-	<form>
-		<fieldset class="form-group">
-			<div class="input-group">
-				<span class="input-group-addon">$</span>
-				<input type="number" class="form-control" id="donationAmount" name="amount" placeholder="Enter amount" style="width:150px">
-			</div>
-		</fieldset>
-		<button id="donateButton_custom">Donate</button>
-	</form>
+	<div id="alertTop" class="alert-top" role="alert"></div>
+	<div class="donation-selection">
+		<p>Donate:</p>
+		<button id="donateButton_5">$5</button>
+		<button id="donateButton_10">$10</button>
+		<button id="donateButton_25">$25</button>
+		<button id="donateButton_50">$50</button>
+		<button id="donateButton_100">$100</button>
+		<br/>
+		<br/>
+		<p>Or, donate a specific amount:</p>
+		<form>
+			<fieldset class="form-group">
+				<div class="input-group">
+					<span class="input-group-addon">$</span>
+					<input type="number" class="form-control" id="donationAmount" name="amount" placeholder="Enter amount" style="width:150px">
+				</div>
+			</fieldset>
+			<button id="donateButton_custom">Donate</button>
+		</form>
+	</div>
+
+	<div class="multi-pay-options">
+		<h3 align="center">Choose payment method</h3>
+		<h4 align="center">(Apple Pay or Credit Card)</h4>
+		<br/>
+		<button id="apple-pay-button" class="apple-pay-button"></button>
+		<br/>
+		<button id="credit-pay-button" type="button" class="credit-pay-button btn btn-default" aria-label="Center Align">
+			<span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span>
+			Credit Card
+		</button>
+		<br/>
+		<button id="cancel-button" type="button" class="credit-pay-button btn btn-default" aria-label="Center Align">
+			<!--<span class="glyphicon" aria-hidden="true"></span>-->
+			Cancel
+		</button>
+		<br/>
+		<br/>
+		<div id="donationAmountAlert" class="alert alert-info" role="alert"></div>
+	</div>
 
 </div>
 
@@ -41,6 +64,17 @@
 
 	function init(publishableKey) {
 		var submittedAmount = 0;
+		var submittedAmountStr = "";
+		var applePayEnabled = false;
+		var organizationDisplayName = "Jessica Vaughn"; // TODO Make this a parameter
+
+		function doSuccess(amount, email) {
+			var loc = "successfulPayment?amount=" + amount;
+			if (email) {
+				loc += "&email=" + email;
+			}
+			window.location = loc;
+		}
 
 		var handler = StripeCheckout.configure({
 			key: publishableKey,
@@ -66,21 +100,68 @@
 					dataType: 'json',
 					success: function(data) {
 						console.log(data);
-						window.location = "successfulPayment?amount=" + data.amount + "&email=" + data.email;
+						doSuccess(data.amount, data.email);
 					}
 				});
 			}
 		});
 
+		function beginApplePay() {
+			var paymentRequest = {
+				countryCode: 'US',
+				currencyCode: 'USD',
+				total: {
+					label: organizationDisplayName,
+					amount: submittedAmountStr
+				}
+			};
+			var session = Stripe.applePay.buildSession(paymentRequest,
+				function(result, completion) {
+
+					$.post('submitPayment', {token: result.token.id}).done(function() {
+						completion(ApplePaySession.STATUS_SUCCESS);
+						// You can now redirect the user to a receipt page, etc.
+						doSuccess(submittedAmount, null);
+					}).fail(function() {
+						completion(ApplePaySession.STATUS_FAILURE);
+					});
+
+				}, function(error) {
+					console.log(error.message);
+				});
+
+			session.begin();
+		}
+
+		function doCreditCardDonate() {
+			handler.open({
+				name: organizationDisplayName,
+				description: 'Donate $' + submittedAmountStr,
+				amount: submittedAmount
+			});
+		}
+
 		function handleDonate(amount, amountStr) {
 			// Open Checkout with further options:
 			submittedAmount = amount;
-			handler.open({
-				name: 'Jessica Vaughn',
-				description: 'Donate $' + amountStr,
-				amount: amount
-			});
+			submittedAmountStr = amountStr;
+			if (!applePayEnabled) {
+				doCreditCardDonate();
+			} else {
+				$('#donationAmountAlert').text("Amount: $" + submittedAmountStr);
+				$('.donation-selection').hide();
+				$('.multi-pay-options').show();
+			}
 		}
+
+		$('#cancel-button').click(function() {
+			$('.donation-selection').show();
+			$('.multi-pay-options').hide();
+		});
+
+		$('#credit-pay-button').click(doCreditCardDonate);
+
+		$('#apple-pay-button').click(beginApplePay);
 
 		document.getElementById('donateButton_custom').addEventListener('click', function(e) {
 			var amount = document.getElementById("donationAmount").value;
@@ -117,6 +198,17 @@
 		window.addEventListener('popstate', function() {
 			handler.close();
 		});
+
+		// Apple Pay
+		Stripe.applePay.checkAvailability(function(available) {
+			if (available) {
+				applePayEnabled = true;
+				console.log("Apple Pay enabled");
+				//document.getElementById('apple-pay-button').style.display = 'block';
+			} else {
+				console.log("Apple Pay not available");
+			}
+		});
 	}
 	$(document).ready(function() {
 		$.ajax({
@@ -127,8 +219,8 @@
 			success: function(data) {
 				//console.log(data);
 				if (data.startsWith("pk_test")) {
-					console.log("TEST MODE");
-					$('#testWarning').text("TEST MODE - No money will be transferred");
+					console.log("TEST MODE - No money will be transferred");
+					$('#alertTop').addClass('alert').addClass('alert-danger').text('! TEST MODE - No money will be transferred !');
 				}
 				init(data);
 			},

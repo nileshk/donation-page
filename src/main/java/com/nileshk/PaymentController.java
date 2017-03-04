@@ -9,6 +9,8 @@ import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
 import com.stripe.model.Charge;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -26,6 +28,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 public class PaymentController {
+
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private String publishableKey;
 
@@ -52,32 +56,49 @@ public class PaymentController {
 	public ChargeResult submitPayment(
 			@RequestBody Map<String, Object> param
 	) {
+		logger.info("--- Submitting Payment ---");
 		Map<String, Object> clientParam = new HashMap<>();
-		clientParam.put("amount", param.get("amount"));
-		clientParam.put("currency", param.get("currency"));
-		clientParam.put("description", param.get("description"));
-		clientParam.put("card", param.get("id"));
+		if (param.containsKey("amount")) {
+			logger.info("Amount: " + param.get("amount"));
+			clientParam.put("amount", param.get("amount"));
+		}
+		if (param.containsKey("currency")) {
+			logger.info("Currency: " + param.get("currency"));
+			clientParam.put("currency", param.get("currency"));
+		}
+		if (param.containsKey("description")) {
+			logger.info("Description: " + param.get("description"));
+			clientParam.put("description", param.get("description"));
+		}
+		clientParam.put("source", param.get("id"));
 		try {
 			Charge chargeResult = Charge.create(clientParam);
+			logger.info("Charge successful");
+			logger.info(chargeResult.toJson());
+			logger.info("-------------------------");
 			return new ChargeResult(chargeResult);
 		} catch (AuthenticationException e) {
-			e.printStackTrace();
+			logger.error("AuthenticationException", e);
+			return ChargeResult.error(e.getMessage());
 		} catch (InvalidRequestException e) {
-			e.printStackTrace();
+			logger.error("InvalidRequestException", e);
+			return ChargeResult.error(e.getMessage());
 		} catch (APIConnectionException e) {
-			e.printStackTrace();
+			logger.error("APIConnectionException", e);
+			return ChargeResult.error(e.getMessage());
 		} catch (CardException e) {
-			e.printStackTrace();
+			logger.error("CardException", e);
+			return ChargeResult.error(e.getMessage());
 		} catch (APIException e) {
-			e.printStackTrace();
+			logger.error("APIException", e);
+			return ChargeResult.error(e.getMessage());
 		}
-		return null; // TODO error response
 	}
 
 	@RequestMapping(value = "/successfulPayment", method = GET)
 	public String successfulPayment(
 			@RequestParam(value = "amount", required = true) Long amount,
-			@RequestParam(value = "email", required = false) String email,
+			@RequestParam(value = "email", required = false, defaultValue = "") String email,
 			Model model) {
 		model.addAttribute("amount", String.valueOf(amount / 100));
 		model.addAttribute("email", email);
