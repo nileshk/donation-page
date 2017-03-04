@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -123,6 +125,11 @@ public class PaymentController {
 			Model model) {
 		model.addAttribute("amount", String.valueOf(amount / 100));
 		model.addAttribute("email", email);
+		try {
+			model.addAttribute("email_urlEncoded", URLEncoder.encode(email, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			logger.error("URL encoding error", e);
+		}
 		model.addAttribute("emailSignupUrl", emailSignupUrl);
 		return "successful_payment";
 	}

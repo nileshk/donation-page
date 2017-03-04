@@ -17,7 +17,8 @@
 	<!--/* <p th:text="${email}"/> */-->
 	<!--/* TODO Signup page URL should be optional */-->
 	<!--/*@thymesVar id="emailSignupUrl" type="string"*/-->
-	<a th:href="${emailSignupUrl} + '?email=' + ${email}">Click here to visit the e-mail signup page to sign up to receive e-mails</a>
+	<!--/*@thymesVar id="email_urlEncoded" type="string"*/-->
+	<a th:href="${emailSignupUrl} + '?email=' + ${email_urlEncoded}">Click here to visit the e-mail signup page to sign up to receive e-mails</a>
 </div>
 
 <script type="text/javascript" src="webjars/jquery/2.0.3/jquery.min.js"></script>
