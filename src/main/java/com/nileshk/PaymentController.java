@@ -37,6 +37,9 @@ public class PaymentController {
 	@Value("${stripe.applyPayEnabled:true}")
 	private Boolean applePayEnabled = true;
 
+	@Value("${email.signup.url:/}")
+	private String emailSignupUrl = "/";
+
 	public PaymentController(
 			@Value("${stripe.secretKey}") String secretKey,
 			@Value("${stripe.publishableKey}") String publishableKey) {
@@ -120,6 +123,7 @@ public class PaymentController {
 			Model model) {
 		model.addAttribute("amount", String.valueOf(amount / 100));
 		model.addAttribute("email", email);
+		model.addAttribute("emailSignupUrl", emailSignupUrl);
 		return "successful_payment";
 	}
 

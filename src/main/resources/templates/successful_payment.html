@@ -15,8 +15,9 @@
 	<p th:text="'Your contribution of $' + ${amount} + ' has been received.'"/>
 	<!--/*@thymesVar id="email" type="string"*/-->
 	<!--/* <p th:text="${email}"/> */-->
-	<!--/* TODO Signup page URL should be a parameter (and optional) */-->
-	<a th:href="'/?email=' + ${email}">Click here to visit the e-mail signup page to sign up to receive e-mails</a>
+	<!--/* TODO Signup page URL should be optional */-->
+	<!--/*@thymesVar id="emailSignupUrl" type="string"*/-->
+	<a th:href="${emailSignupUrl} + '?email=' + ${email}">Click here to visit the e-mail signup page to sign up to receive e-mails</a>
 </div>
 
 <script type="text/javascript" src="webjars/jquery/2.0.3/jquery.min.js"></script>
