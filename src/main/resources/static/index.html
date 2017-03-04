@@ -79,7 +79,7 @@
 <script>
 	"use strict";
 
-	function init(publishableKey, organizationDisplayName) {
+	function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured) {
 		var submittedAmount = 0;
 		var submittedAmountStr = "";
 		var applePayEnabled = false;
@@ -229,16 +229,18 @@
 			handler.close();
 		});
 
-		// Apple Pay
-		Stripe.applePay.checkAvailability(function(available) {
-			if (available) {
-				applePayEnabled = true;
-				console.log("Apple Pay enabled");
-				//document.getElementById('apple-pay-button').style.display = 'block';
-			} else {
-				console.log("Apple Pay not available");
-			}
-		});
+		if (applyPayEnabledConfigured) {
+			// Apple Pay
+			Stripe.applePay.checkAvailability(function(available) {
+				if (available) {
+					applePayEnabled = true;
+					console.log("Apple Pay enabled");
+					//document.getElementById('apple-pay-button').style.display = 'block';
+				} else {
+					console.log("Apple Pay not available");
+				}
+			});
+		}
 	}
 	$(document).ready(function() {
 		$.ajax({
@@ -252,7 +254,7 @@
 					console.log("TEST MODE - No money will be transferred");
 					$('#alertTop').addClass('alert').addClass('alert-danger').text('! TEST MODE - No money will be transferred !');
 				}
-				init(data.publishableKey, data.organizationDisplayName);
+				init(data.publishableKey, data.organizationDisplayName, data.applyPayEnabled);
 			},
 			error: function(x, textStatus, errorThrown) {
 				console.log("textStatus: " + textStatus);

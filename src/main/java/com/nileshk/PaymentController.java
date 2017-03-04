@@ -34,6 +34,9 @@ public class PaymentController {
 	@Value("${org.displayName:}")
 	private String organizationDisplayName = "";
 
+	@Value("${stripe.applyPayEnabled:true")
+	private Boolean applePayEnabled = true;
+
 	public PaymentController(
 			@Value("${stripe.secretKey}") String secretKey,
 			@Value("${stripe.publishableKey}") String publishableKey) {
@@ -47,6 +50,7 @@ public class PaymentController {
 		ClientConfig config = new ClientConfig();
 		config.setPublishableKey(publishableKey);
 		config.setOrganizationDisplayName(organizationDisplayName);
+		config.setApplyPayEnabled(true);
 		return config;
 	}
 

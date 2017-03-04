@@ -11,6 +11,7 @@ public class ClientConfig implements Serializable {
 
 	private String publishableKey;
 	private String organizationDisplayName;
+	private Boolean applyPayEnabled = true;
 
 	public String getPublishableKey() {
 		return publishableKey;
@@ -26,5 +27,13 @@ public class ClientConfig implements Serializable {
 
 	public void setOrganizationDisplayName(String organizationDisplayName) {
 		this.organizationDisplayName = organizationDisplayName;
+	}
+
+	public Boolean getApplyPayEnabled() {
+		return applyPayEnabled;
+	}
+
+	public void setApplyPayEnabled(Boolean applyPayEnabled) {
+		this.applyPayEnabled = applyPayEnabled;
 	}
 }
