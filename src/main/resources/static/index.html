@@ -57,6 +57,23 @@
 
 </div>
 
+<div id="errorDialog" class="modal fade" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Payment Failed</h4>
+			</div>
+			<div class="modal-body">
+				<p id="errorMessage"></p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script type="text/javascript" src="webjars/jquery/2.0.3/jquery.min.js"></script>
 
 <script>
@@ -74,6 +91,11 @@
 				loc += "&email=" + email;
 			}
 			window.location = loc;
+		}
+
+		function errorDialog(errorMessage) {
+			$("#errorMessage").text(errorMessage);
+			$('#errorDialog').modal();
 		}
 
 		var handler = StripeCheckout.configure({
@@ -97,11 +119,16 @@
 					url: 'submitPayment',
 					data: JSON.stringify(param),
 					contentType: "application/json",
-					dataType: 'json',
-					success: function(data) {
-						console.log(data);
+					dataType: 'json'
+				}).done(function(data) {
+					console.log(data);
+					if (!data.error) {
 						doSuccess(data.amount, data.email);
+					} else {
+						errorDialog(data.errorMessage);
 					}
+				}).fail(function(jqXHR, textStatus, errorThrown) {
+					errorDialog(textStatus + ": " + errorThrown);
 				});
 			}
 		});
@@ -122,12 +149,14 @@
 						completion(ApplePaySession.STATUS_SUCCESS);
 						// You can now redirect the user to a receipt page, etc.
 						doSuccess(submittedAmount, null);
-					}).fail(function() {
+					}).fail(function(x, textStatus, errorThrown) {
 						completion(ApplePaySession.STATUS_FAILURE);
+						errorDialog(textStatus + ": " + errorThrown);
 					});
 
 				}, function(error) {
 					console.log(error.message);
+					errorDialog(error.message);
 				});
 
 			session.begin();
@@ -229,6 +258,7 @@
 			error: function(x, textStatus, errorThrown) {
 				console.log("textStatus: " + textStatus);
 				console.log("errorThrown: " + errorThrown);
+				alert("Initial page load failed");
 			}
 		});
 	});

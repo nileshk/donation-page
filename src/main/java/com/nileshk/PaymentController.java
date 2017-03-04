@@ -92,6 +92,9 @@ public class PaymentController {
 		} catch (APIException e) {
 			logger.error("APIException", e);
 			return ChargeResult.error(e.getMessage());
+		} catch (RuntimeException e) {
+			logger.error("RuntimeException", e);
+			return ChargeResult.error("Application error occurred, please contact admin:" + e.getMessage());
 		}
 	}
 
