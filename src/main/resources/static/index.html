@@ -79,11 +79,10 @@
 <script>
 	"use strict";
 
-	function init(publishableKey) {
+	function init(publishableKey, organizationDisplayName) {
 		var submittedAmount = 0;
 		var submittedAmountStr = "";
 		var applePayEnabled = false;
-		var organizationDisplayName = "Jessica Vaughn"; // TODO Make this a parameter
 
 		function doSuccess(amount, email) {
 			var loc = "successfulPayment?amount=" + amount;
@@ -244,16 +243,16 @@
 	$(document).ready(function() {
 		$.ajax({
 			type: 'GET',
-			url: 'getPublishableKey',
+			url: 'getConfig',
 			contentType: "application/json",
 			dataType: 'json',
 			success: function(data) {
 				//console.log(data);
-				if (data.startsWith("pk_test")) {
+				if (data.publishableKey.startsWith("pk_test")) {
 					console.log("TEST MODE - No money will be transferred");
 					$('#alertTop').addClass('alert').addClass('alert-danger').text('! TEST MODE - No money will be transferred !');
 				}
-				init(data);
+				init(data.publishableKey, data.organizationDisplayName);
 			},
 			error: function(x, textStatus, errorThrown) {
 				console.log("textStatus: " + textStatus);

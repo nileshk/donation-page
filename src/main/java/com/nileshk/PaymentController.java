@@ -1,7 +1,5 @@
 package com.nileshk;
 
-import com.fasterxml.jackson.annotation.JsonRawValue;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
@@ -33,6 +31,9 @@ public class PaymentController {
 
 	private String publishableKey;
 
+	@Value("${org.displayName:}")
+	private String organizationDisplayName = "";
+
 	public PaymentController(
 			@Value("${stripe.secretKey}") String secretKey,
 			@Value("${stripe.publishableKey}") String publishableKey) {
@@ -40,11 +41,13 @@ public class PaymentController {
 		this.publishableKey = publishableKey;
 	}
 
-
-	@RequestMapping(value = "/getPublishableKey", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	@RequestMapping(value = "/getConfig", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public Json getPublishableKey() {
-		return new Json("\"" + publishableKey + "\"");
+	public ClientConfig getClientConfig() {
+		ClientConfig config = new ClientConfig();
+		config.setPublishableKey(publishableKey);
+		config.setOrganizationDisplayName(organizationDisplayName);
+		return config;
 	}
 
 
@@ -106,20 +109,6 @@ public class PaymentController {
 		model.addAttribute("amount", String.valueOf(amount / 100));
 		model.addAttribute("email", email);
 		return "successful_payment";
-	}
-
-	class Json {
-		private final String value;
-
-		public Json(String value) {
-			this.value = value;
-		}
-
-		@JsonValue
-		@JsonRawValue
-		public String value() {
-			return value;
-		}
 	}
 
 }
