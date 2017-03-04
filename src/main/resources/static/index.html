@@ -74,6 +74,21 @@
 	</div>
 </div>
 
+<div id="processingPaymentDialog" class="modal fade" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Processing your payment...</h4>
+			</div>
+			<!--
+			<div class="modal-body">
+			</div>
+			-->
+		</div>
+	</div>
+</div>
+
 <script type="text/javascript" src="webjars/jquery/2.0.3/jquery.min.js"></script>
 
 <script>
@@ -113,6 +128,7 @@
 					token: token
 				};
 				// console.log(param);
+				$('#processingPaymentDialog').modal();
 				$.ajax({
 					type: 'POST',
 					url: 'submitPayment',
@@ -120,6 +136,7 @@
 					contentType: "application/json",
 					dataType: 'json'
 				}).done(function(data) {
+					$('#processingPaymentDialog').modal('hide');
 					console.log(data);
 					if (!data.error) {
 						doSuccess(data.amount, data.email);
@@ -127,7 +144,10 @@
 						errorDialog(data.errorMessage);
 					}
 				}).fail(function(jqXHR, textStatus, errorThrown) {
+					$('#processingPaymentDialog').modal('hide');
 					errorDialog(textStatus + ": " + errorThrown);
+				}).always(function() {
+					$('#processingPaymentDialog').modal('hide');
 				});
 			}
 		});
@@ -144,7 +164,7 @@
 			};
 			var session = Stripe.applePay.buildSession(paymentRequest,
 				function(result, completion) {
-
+					$('#processingPaymentDialog').modal();
 					$.post('submitPayment', {token: result.token.id, description: result.shippingContact.emailAddress, logData: JSON.stringify(result)}).done(function() {
 						completion(ApplePaySession.STATUS_SUCCESS);
 						// You can now redirect the user to a receipt page, etc.
@@ -152,9 +172,13 @@
 					}).fail(function(x, textStatus, errorThrown) {
 						completion(ApplePaySession.STATUS_FAILURE);
 						errorDialog(textStatus + ": " + errorThrown);
+					}).always(function() {
+						$('#processingPaymentDialog').modal('hide');
 					});
 
+
 				}, function(error) {
+					$('#processingPaymentDialog').modal('hide');
 					console.log(error.message);
 					errorDialog(error.message);
 				});
