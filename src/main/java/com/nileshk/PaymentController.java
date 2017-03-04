@@ -34,7 +34,7 @@ public class PaymentController {
 	@Value("${org.displayName:}")
 	private String organizationDisplayName = "";
 
-	@Value("${stripe.applyPayEnabled:true")
+	@Value("${stripe.applyPayEnabled:true}")
 	private Boolean applePayEnabled = true;
 
 	public PaymentController(
@@ -65,6 +65,10 @@ public class PaymentController {
 	) {
 		logger.info("--- Submitting Payment ---");
 		Map<String, Object> clientParam = new HashMap<>();
+		if (param.containsKey("logData")) {
+			logger.info("Request LOG:");
+			logger.info(param.get("logData").toString());
+		}
 		if (param.containsKey("amount")) {
 			logger.info("Amount: " + param.get("amount"));
 			clientParam.put("amount", param.get("amount"));
@@ -81,6 +85,10 @@ public class PaymentController {
 		try {
 			Charge chargeResult = Charge.create(clientParam);
 			logger.info("Charge successful");
+			if (param.containsKey("description")) {
+				logger.info("EMAIL: " + param.get("description"));
+			}
+			logger.info("Charge Result:");
 			logger.info(chargeResult.toJson());
 			logger.info("-------------------------");
 			return new ChargeResult(chargeResult);

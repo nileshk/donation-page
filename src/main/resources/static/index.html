@@ -134,6 +134,7 @@
 
 		function beginApplePay() {
 			var paymentRequest = {
+				requiredShippingContactFields: ['email'],
 				countryCode: 'US',
 				currencyCode: 'USD',
 				total: {
@@ -144,7 +145,7 @@
 			var session = Stripe.applePay.buildSession(paymentRequest,
 				function(result, completion) {
 
-					$.post('submitPayment', {token: result.token.id}).done(function() {
+					$.post('submitPayment', {token: result.token.id, description: result.shippingContact.emailAddress, logData: JSON.stringify(result)}).done(function() {
 						completion(ApplePaySession.STATUS_SUCCESS);
 						// You can now redirect the user to a receipt page, etc.
 						doSuccess(submittedAmount, null);
