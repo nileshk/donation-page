@@ -95,6 +95,8 @@
 	"use strict";
 
 	function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured) {
+		Stripe.setPublishableKey(publishableKey);
+
 		var submittedAmount = 0;
 		var submittedAmountStr = "";
 		var applePayEnabled = false;
