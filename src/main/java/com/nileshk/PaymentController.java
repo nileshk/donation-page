@@ -55,7 +55,7 @@ public class PaymentController {
 		ClientConfig config = new ClientConfig();
 		config.setPublishableKey(publishableKey);
 		config.setOrganizationDisplayName(organizationDisplayName);
-		config.setApplyPayEnabled(true);
+		config.setApplyPayEnabled(applePayEnabled);
 		return config;
 	}
 
