@@ -54,6 +54,14 @@ public class PaymentController {
 		return "index";
 	}
 
+	/**
+	 * @return Page that is an HTML fragment for integrating into other apps
+	 */
+	@RequestMapping(value = "/fragment", method = GET)
+	public String fragment() {
+		return "fragment";
+	}
+
 	@RequestMapping(value = "/getConfig", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ClientConfig getClientConfig() {

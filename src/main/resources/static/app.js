@@ -1,3 +1,5 @@
+var _stripePaymentsBaseUrl = (typeof _stripePaymentsBaseUrl === 'undefined') ? '' : _stripePaymentsBaseUrl;
+
 function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured) {
 	"use strict";
 	//noinspection JSUnresolvedVariable
@@ -41,7 +43,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 			$('#processingPaymentDialog').modal();
 			$.ajax({
 				type: 'POST',
-				url: 'submitPayment',
+				url: _stripePaymentsBaseUrl + 'submitPayment',
 				data: JSON.stringify(param),
 				contentType: "application/json",
 				dataType: 'json'
@@ -64,7 +66,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 
 	function beginApplePay() {
 		var paymentRequest = {
-			requiredShippingContactFields: ['email'],
+			requiredShippingContactFields: ['email', 'name', 'postalAddress'],
 			countryCode: 'US',
 			currencyCode: 'USD',
 			total: {
@@ -75,7 +77,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 		var session = Stripe.applePay.buildSession(paymentRequest,
 			function(result, completion) {
 				$('#processingPaymentDialog').modal();
-				$.post('submitPayment', {token: result.token.id, description: result.shippingContact.emailAddress, logData: JSON.stringify(result)}).done(function() {
+				$.post(_stripePaymentsBaseUrl + 'submitPayment', {token: result.token.id, description: result.shippingContact.emailAddress, logData: JSON.stringify(result)}).done(function() {
 					completion(ApplePaySession.STATUS_SUCCESS);
 					// You can now redirect the user to a receipt page, etc.
 					doSuccess(submittedAmount, null);
@@ -180,7 +182,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 $(document).ready(function() {
 	$.ajax({
 		type: 'GET',
-		url: 'getConfig',
+		url: _stripePaymentsBaseUrl + 'getConfig',
 		contentType: "application/json",
 		dataType: 'json',
 		success: function(data) {

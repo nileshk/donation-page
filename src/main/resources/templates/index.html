@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--suppress JSUnresolvedLibraryURL -->
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 	<title>Contribute</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -12,82 +12,8 @@
 <script src="https://checkout.stripe.com/checkout.js" type="text/javascript"></script>
 <script src="https://js.stripe.com/v2/" type="text/javascript"></script>
 
-<div class="container">
-	<div id="alertTop" class="alert-top" role="alert"></div>
-	<div class="donation-selection">
-		<p>Donate:</p>
-		<button id="donateButton_5" class="btn btn-primary express-button">$5</button>
-		<button id="donateButton_10" class="btn btn-primary express-button">$10</button>
-		<button id="donateButton_25" class="btn btn-primary express-button">$25</button>
-		<button id="donateButton_50" class="btn btn-primary express-button">$50</button>
-		<button id="donateButton_100" class="btn btn-primary express-button">$100</button>
-		<br/>
-		<br/>
-		<p>Or, donate a specific amount:</p>
-		<form>
-			<fieldset class="form-group">
-				<div class="input-group">
-					<span class="input-group-addon">$</span>
-					<input type="number" class="form-control" id="donationAmount" name="amount" placeholder="Enter amount" style="width:150px"/>
-					<button id="donateButton_custom" class="btn btn-primary" style="margin-left: -2px;">Donate</button>
-				</div>
-			</fieldset>
-		</form>
-	</div>
-
-	<div class="multi-pay-options">
-		<h3 align="center">Choose payment method</h3>
-		<h4 align="center">(Apple Pay or Credit Card)</h4>
-		<br/>
-		<button id="apple-pay-button" class="apple-pay-button"></button>
-		<br/>
-		<button id="credit-pay-button" type="button" class="credit-pay-button btn btn-default" aria-label="Center Align">
-			<span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span>
-			Credit Card
-		</button>
-		<br/>
-		<button id="cancel-button" type="button" class="credit-pay-button btn btn-default" aria-label="Center Align">
-			<!--<span class="glyphicon" aria-hidden="true"></span>-->
-			Cancel
-		</button>
-		<br/>
-		<br/>
-		<div id="donationAmountAlert" class="alert alert-info" role="alert"></div>
-	</div>
-
-</div>
-
-<div id="errorDialog" class="modal fade" tabindex="-1" role="dialog">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title">Payment Failed</h4>
-			</div>
-			<div class="modal-body">
-				<p id="errorMessage"></p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div id="processingPaymentDialog" class="modal fade" tabindex="-1" role="dialog">
-	<div class="modal-dialog" role="document">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title">Processing your payment...</h4>
-			</div>
-			<!--
-			<div class="modal-body">
-			</div>
-			-->
-		</div>
-	</div>
-</div>
+<div th:include="templates :: container" class="container"></div>
+<div th:include="templates :: dialogs"></div>
 
 <script src="webjars/jquery/2.0.3/jquery.min.js" type="text/javascript"></script>
 <script src="app.js" type="text/javascript"></script>
