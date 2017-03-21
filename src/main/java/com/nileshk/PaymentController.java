@@ -49,6 +49,11 @@ public class PaymentController {
 		this.publishableKey = publishableKey;
 	}
 
+	@RequestMapping(value = "/", method = GET)
+	public String index() {
+		return "index";
+	}
+
 	@RequestMapping(value = "/getConfig", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ClientConfig getClientConfig() {
