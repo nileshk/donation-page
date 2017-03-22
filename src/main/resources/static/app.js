@@ -77,7 +77,20 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 		var session = Stripe.applePay.buildSession(paymentRequest,
 			function(result, completion) {
 				$('#processingPaymentDialog').modal();
-				$.post(_stripePaymentsBaseUrl + 'submitPayment', {token: result.token.id, description: result.shippingContact.emailAddress, logData: JSON.stringify(result)}).done(function() {
+				var param = {
+					id: result.token.id,
+					amount: submittedAmount,
+					description: result.shippingContact.emailAddress,
+					logData: JSON.stringify(result)
+				};
+
+				$.ajax({
+						type: 'POST',
+						url: _stripePaymentsBaseUrl + 'submitPayment',
+						data: JSON.stringify(param),
+						contentType: "application/json",
+						dataType: 'json'
+				}).done(function() {
 					completion(ApplePaySession.STATUS_SUCCESS);
 					// You can now redirect the user to a receipt page, etc.
 					doSuccess(submittedAmount, null);
