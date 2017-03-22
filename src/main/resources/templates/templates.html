@@ -25,27 +25,6 @@
 			</fieldset>
 		</form>
 	</div>
-
-	<div class="multi-pay-options">
-		<h3 align="center">Choose payment method</h3>
-		<h4 align="center">(Apple Pay or Credit Card)</h4>
-		<br/>
-		<button id="apple-pay-button" class="apple-pay-button"></button>
-		<br/>
-		<button id="credit-pay-button" type="button" class="credit-pay-button btn btn-default" aria-label="Center Align">
-			<span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span>
-			Credit Card
-		</button>
-		<br/>
-		<button id="cancel-button" type="button" class="credit-pay-button btn btn-default" aria-label="Center Align">
-			<!--<span class="glyphicon" aria-hidden="true"></span>-->
-			Cancel
-		</button>
-		<br/>
-		<br/>
-		<div id="donationAmountAlert" class="alert alert-info" role="alert"></div>
-	</div>
-
 </div>
 
 <div th:fragment="dialogs">
@@ -77,6 +56,33 @@
 				<div class="modal-body">
 				</div>
 				-->
+			</div>
+		</div>
+	</div>
+
+	<div id="multi-pay-options" class="modal fade" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h3 align="center">Choose payment method</h3>
+					<h4 align="center">(Apple Pay or Credit Card)</h4>
+					<br/>
+					<button id="apple-pay-button" class="apple-pay-button"></button>
+					<br/>
+					<button id="credit-pay-button" type="button" class="credit-pay-button btn btn-default" aria-label="Center Align">
+						<span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span>
+						Credit Card
+					</button>
+					<br/>
+					<button id="cancel-button" type="button" class="credit-pay-button btn btn-default" aria-label="Center Align">
+						<!--<span class="glyphicon" aria-hidden="true"></span>-->
+						Cancel
+					</button>
+					<br/>
+					<br/>
+					<div id="donationAmountAlert" class="alert alert-info" role="alert"></div>
+
+				</div>
 			</div>
 		</div>
 	</div>

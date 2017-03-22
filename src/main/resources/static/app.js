@@ -20,6 +20,8 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 	function errorDialog(errorMessage) {
 		$("#errorMessage").text(errorMessage);
 		$('#errorDialog').modal();
+		hideMultiPay();
+		$('.donation-selection').show();
 	}
 
 	var handler = StripeCheckout.configure({
@@ -65,6 +67,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 	});
 
 	function beginApplePay() {
+		hideMultiPay();
 		var paymentRequest = {
 			requiredShippingContactFields: ['email', 'name', 'postalAddress'],
 			countryCode: 'US',
@@ -112,11 +115,16 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 	}
 
 	function doCreditCardDonate() {
+		hideMultiPay();
 		handler.open({
 			name: organizationDisplayName,
 			description: 'Donate $' + submittedAmountStr,
 			amount: submittedAmount
 		});
+	}
+
+	function hideMultiPay(func) {
+		$('#multi-pay-options').modal('hide');
 	}
 
 	function handleDonate(amount, amountStr) {
@@ -127,14 +135,14 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 			doCreditCardDonate();
 		} else {
 			$('#donationAmountAlert').text("Amount: $" + submittedAmountStr);
-			$('.donation-selection').hide();
-			$('.multi-pay-options').show();
+			//$('.donation-selection').hide();
+			$('#multi-pay-options').modal();
 		}
 	}
 
 	$('#cancel-button').click(function() {
 		$('.donation-selection').show();
-		$('.multi-pay-options').hide();
+		hideMultiPay();
 	});
 
 	$('#credit-pay-button').click(doCreditCardDonate);
