@@ -23,6 +23,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -35,6 +36,9 @@ public class PaymentController {
 
 	@Value("${org.displayName:}")
 	private String organizationDisplayName = "";
+
+	@Value("${messages.donateHeader:}")
+	private String donateHeader = "";
 
 	@Value("${stripe.applyPayEnabled:true}")
 	private Boolean applePayEnabled = true;
@@ -50,15 +54,26 @@ public class PaymentController {
 	}
 
 	@RequestMapping(value = "/", method = GET)
-	public String index() {
+	public String index(Model model) {
+		defaultModel(model);
 		return "index";
+	}
+
+	private void defaultModel(Model model) {
+		model.addAttribute("organizationDisplayName", organizationDisplayName);
+		String displayedDonateHeader = isNotEmpty(this.donateHeader) ? this.donateHeader :
+				(isNotEmpty(organizationDisplayName)
+						? ("Donate to " + organizationDisplayName)
+						: ("Donate:"));
+		model.addAttribute("donateHeader", displayedDonateHeader);
 	}
 
 	/**
 	 * @return Page that is an HTML fragment for integrating into other apps
 	 */
 	@RequestMapping(value = "/fragment", method = GET)
-	public String fragment() {
+	public String fragment(Model model) {
+		defaultModel(model);
 		return "fragment";
 	}
 
