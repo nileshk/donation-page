@@ -50,7 +50,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 				contentType: "application/json",
 				dataType: 'json'
 			}).done(function(data) {
-				$('#processingPaymentDialog').modal('hide');
+				hideProcessingPayment();
 				console.log(data);
 				if (!data.error) {
 					doSuccess(data.amount, data.email);
@@ -58,10 +58,10 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 					errorDialog(data.errorMessage);
 				}
 			}).fail(function(jqXHR, textStatus, errorThrown) {
-				$('#processingPaymentDialog').modal('hide');
+				hideProcessingPayment();
 				errorDialog(textStatus + ": " + errorThrown);
 			}).always(function() {
-				$('#processingPaymentDialog').modal('hide');
+				hideProcessingPayment();
 			});
 		}
 	});
@@ -83,6 +83,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 				var param = {
 					id: result.token.id,
 					amount: submittedAmount,
+					currency: 'usd',
 					description: result.shippingContact.emailAddress,
 					logData: JSON.stringify(result)
 				};
@@ -93,20 +94,24 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 						data: JSON.stringify(param),
 						contentType: "application/json",
 						dataType: 'json'
-				}).done(function() {
+				}).done(function(data) {
 					completion(ApplePaySession.STATUS_SUCCESS);
 					// You can now redirect the user to a receipt page, etc.
-					doSuccess(submittedAmount, null);
+					if (!data.error) {
+						doSuccess(data.amount, data.email);
+					} else {
+						errorDialog(data.errorMessage);
+					}
 				}).fail(function(x, textStatus, errorThrown) {
 					completion(ApplePaySession.STATUS_FAILURE);
 					errorDialog(textStatus + ": " + errorThrown);
 				}).always(function() {
-					$('#processingPaymentDialog').modal('hide');
+					hideProcessingPayment();
 				});
 
 
 			}, function(error) {
-				$('#processingPaymentDialog').modal('hide');
+				hideProcessingPayment();
 				console.log(error.message);
 				errorDialog(error.message);
 			});
@@ -123,8 +128,12 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 		});
 	}
 
-	function hideMultiPay(func) {
+	function hideMultiPay() {
 		$('#multi-pay-options').modal('hide');
+	}
+
+	function hideProcessingPayment() {
+		$('#processingPaymentDialog').modal('hide');
 	}
 
 	function handleDonate(amount, amountStr) {
