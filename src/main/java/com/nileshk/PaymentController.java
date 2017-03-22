@@ -37,8 +37,14 @@ public class PaymentController {
 	@Value("${org.displayName:}")
 	private String organizationDisplayName = "";
 
+	@Value("${org.siteTitle:}")
+	private String siteTitle = "";
+
 	@Value("${messages.donateHeader:}")
 	private String donateHeader = "";
+
+	@Value("${url.mainPage:/}")
+	private String mainPageUrl = "/";
 
 	@Value("${stripe.applyPayEnabled:true}")
 	private Boolean applePayEnabled = true;
@@ -61,11 +67,16 @@ public class PaymentController {
 
 	private void defaultModel(Model model) {
 		model.addAttribute("organizationDisplayName", organizationDisplayName);
+		model.addAttribute("mainPageUrl", mainPageUrl);
+		String displaySiteTitle = isNotEmpty(siteTitle) ? siteTitle : organizationDisplayName;
+		model.addAttribute("siteTitle", displaySiteTitle);
+		/*
 		String displayedDonateHeader = isNotEmpty(this.donateHeader) ? this.donateHeader :
 				(isNotEmpty(organizationDisplayName)
 						? ("Donate to " + organizationDisplayName)
 						: ("Donate:"));
 		model.addAttribute("donateHeader", displayedDonateHeader);
+		*/
 	}
 
 	/**
