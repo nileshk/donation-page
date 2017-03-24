@@ -39,7 +39,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 		image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
 		locale: 'auto',
 		currency: 'usd',
-		shippingAddress: true,
+		billingAddress: true,
 		allowRememberMe: true,
 		token: function(token) {
 			// You can access the token ID with `token.id`.
