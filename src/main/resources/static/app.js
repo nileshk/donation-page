@@ -1,5 +1,15 @@
 var _stripePaymentsBaseUrl = (typeof _stripePaymentsBaseUrl === 'undefined') ? '' : _stripePaymentsBaseUrl;
 
+var _SP_handleDonate;
+
+// Polyfill startsWith
+if (!String.prototype.startsWith) {
+  String.prototype.startsWith = function(searchString, position) {
+    position = position || 0;
+    return this.indexOf(searchString, position) === position;
+  };
+}
+
 function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured) {
 	"use strict";
 	//noinspection JSUnresolvedVariable
@@ -224,9 +234,9 @@ $(document).ready(function() {
 			init(data.publishableKey, data.organizationDisplayName, data.applyPayEnabled);
 		},
 		error: function(x, textStatus, errorThrown) {
+			alert("Initial page load failed");
 			console.log("textStatus: " + textStatus);
 			console.log("errorThrown: " + errorThrown);
-			alert("Initial page load failed");
 		}
 	});
 });
