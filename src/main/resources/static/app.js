@@ -61,7 +61,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 				dataType: 'json'
 			}).done(function(data) {
 				hideProcessingPayment();
-				console.log(data);
+				// console.log(data);
 				if (!data.error) {
 					doSuccess(data.amount, data.email);
 				} else {
@@ -122,7 +122,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 
 			}, function(error) {
 				hideProcessingPayment();
-				console.log(error.message);
+				// console.log(error.message);
 				errorDialog(error.message);
 			});
 
@@ -211,10 +211,10 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 		Stripe.applePay.checkAvailability(function(available) {
 			if (available) {
 				applePayEnabled = true;
-				console.log("Apple Pay enabled");
+				// console.log("Apple Pay enabled");
 				//document.getElementById('apple-pay-button').style.display = 'block';
 			} else {
-				console.log("Apple Pay not available");
+				// console.log("Apple Pay not available");
 			}
 		});
 	}
