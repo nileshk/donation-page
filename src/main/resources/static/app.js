@@ -195,37 +195,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 		}
 		e.preventDefault();
 	});
-/*
-	document.getElementById('donateButton_5').addEventListener('click', function(e) {
-		handleDonate(500, "5");
-		e.preventDefault();
-	});
 
-	document.getElementById('donateButton_10').addEventListener('click', function(e) {
-		handleDonate(1000, "10");
-		e.preventDefault();
-	});
-
-	document.getElementById('donateButton_25').addEventListener('click', function(e) {
-		handleDonate(2500, "25");
-		e.preventDefault();
-	});
-
-	document.getElementById('donateButton_27').addEventListener('click', function(e) {
-		handleDonate(2700, "27");
-		e.preventDefault();
-	});
-
-	document.getElementById('donateButton_50').addEventListener('click', function(e) {
-		handleDonate(5000, "50");
-		e.preventDefault();
-	});
-
-	document.getElementById('donateButton_100').addEventListener('click', function(e) {
-		handleDonate(10000, "100");
-		e.preventDefault();
-	});
-*/
 	// Close Checkout on page navigation:
 	window.addEventListener('popstate', function() {
 		handler.close();
