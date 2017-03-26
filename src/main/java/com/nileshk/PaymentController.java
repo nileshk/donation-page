@@ -139,7 +139,7 @@ public class PaymentController {
 
 		if (isNotEmpty(occupation)) {
 			logger.info("Occupation: " + occupation);
-		} else if (collectOccupationEnabled && (collectOccupationThreshold != null && collectOccupationThreshold > 0 && (amount == null || (amount > collectOccupationThreshold * 100)))) {
+		} else if (collectOccupationEnabled && (collectOccupationThreshold != null && (amount == null || (amount > collectOccupationThreshold * 100)))) {
 			return ChargeResult.error("Occupation not provided");
 		}
 
