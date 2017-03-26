@@ -24,6 +24,8 @@ See a live version of it here:
   * **stripe.applyPayEnabled** - `true` to enable Apple Pay, `false` to disable.  Defaults to `true`.
   * **url.mainPage**  - URL for main page of web site (text with `org.siteTitle` links to this). Default is `/`
   * **email.signup.url** - Page where email signup resides.  Default is `/`
+  * **app.collectOccupationEnabled** - if `true`, collect contributor's occupation. Default is `true`.
+  
 * Using Java 8 or later, to run the application:
   * java -jar stripe-payments.jar
 * The properties listed above could also be supplied on the command line, for example:

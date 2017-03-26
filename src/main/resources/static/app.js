@@ -1,6 +1,6 @@
 var _stripePaymentsBaseUrl = (typeof _stripePaymentsBaseUrl === 'undefined') ? '' : _stripePaymentsBaseUrl;
 
-var _SP_handleDonate;
+var _DonationPage_handleDonate;
 
 // Polyfill startsWith
 if (!String.prototype.startsWith) {
@@ -14,10 +14,16 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 	"use strict";
 	//noinspection JSUnresolvedVariable
 	Stripe.setPublishableKey(publishableKey);
+	var collectOccupationEnabled = (typeof _DonationPage_collectOccupationEnabled === 'undefined') ? true : _DonationPage_collectOccupationEnabled;
 
 	var submittedAmount = 0;
 	var submittedAmountStr = "";
 	var applePayEnabled = false;
+	var occupation = "";
+
+	function isEmpty(str) {
+	    return (!str || 0 === str.length);
+	}
 
 	function doSuccess(amount, email) {
 		var loc = "successfulPayment?amount=" + amount;
@@ -49,6 +55,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 				currency: 'usd',
 				amount: submittedAmount,
 				description: token.email,
+				occupation: occupation,
 				token: token
 			};
 			// console.log(param);
@@ -95,6 +102,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 					amount: submittedAmount,
 					currency: 'usd',
 					description: result.shippingContact.emailAddress,
+					occupation: occupation,
 					logData: JSON.stringify(result)
 				};
 
@@ -150,6 +158,15 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 		// Open Checkout with further options:
 		submittedAmount = amount;
 		submittedAmountStr = amountStr;
+
+		occupation = $('#occupationInput').val();
+		if (collectOccupationEnabled && isEmpty(occupation)) {
+			$('#alertOccupation').addClass('alert').addClass('alert-danger').text("Please provide your occupation");
+			return;
+		} else {
+			$('#alertOccupation').removeClass("alert").addClass("alert-danger").text("");
+		}
+
 		if (!applePayEnabled) {
 			doCreditCardDonate();
 		} else {
@@ -159,7 +176,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 		}
 	}
 
-	_SP_handleDonate = handleDonate;
+	_DonationPage_handleDonate = handleDonate;
 
 	$('#cancel-button').click(function() {
 		$('.donation-selection').show();
@@ -170,7 +187,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 
 	$('#apple-pay-button').click(beginApplePay);
 
-	document.getElementById('donateButton_custom').addEventListener('click', function(e) {
+	$('#donateButton_custom').click(function(e) {
 		var amount = document.getElementById("donationAmount").value;
 		if (amount) {
 			handleDonate(parseInt(amount) * 100, amount);

@@ -52,6 +52,9 @@ public class PaymentController {
 	@Value("${email.signup.url:/}")
 	private String emailSignupUrl = "/";
 
+	@Value("${app.collectOccupationEnabled:true}")
+	private Boolean collectOccupationEnabled = true;
+
 	public PaymentController(
 			@Value("${stripe.secretKey}") String secretKey,
 			@Value("${stripe.publishableKey}") String publishableKey) {
@@ -70,6 +73,7 @@ public class PaymentController {
 		model.addAttribute("mainPageUrl", mainPageUrl);
 		String displaySiteTitle = isNotEmpty(siteTitle) ? siteTitle : organizationDisplayName;
 		model.addAttribute("siteTitle", displaySiteTitle);
+		model.addAttribute("collectOccupationEnabled", collectOccupationEnabled);
 		/*
 		String displayedDonateHeader = isNotEmpty(this.donateHeader) ? this.donateHeader :
 				(isNotEmpty(organizationDisplayName)
@@ -125,6 +129,15 @@ public class PaymentController {
 			logger.info("Description: " + param.get("description"));
 			clientParam.put("description", param.get("description"));
 		}
+
+		String occupation = (String) param.getOrDefault("occupation", null);
+
+		if (isNotEmpty(occupation)) {
+			logger.info("Occupation: " + occupation);
+		} else if (collectOccupationEnabled /* TODO > threshold */) {
+			return ChargeResult.error("Occupation not provided");
+		}
+
 		clientParam.put("source", param.get("id"));
 		try {
 			Charge chargeResult = Charge.create(clientParam);
