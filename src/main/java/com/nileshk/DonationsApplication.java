@@ -6,14 +6,14 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class StripePaymentsApplication extends SpringBootServletInitializer {
+public class DonationsApplication extends SpringBootServletInitializer {
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(StripePaymentsApplication.class);
+		return application.sources(DonationsApplication.class);
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(StripePaymentsApplication.class, args);
+		SpringApplication.run(DonationsApplication.class, args);
 	}
 }
