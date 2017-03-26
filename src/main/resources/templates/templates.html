@@ -22,15 +22,18 @@
 		<!--/*@thymesVar id="siteTitle" type="string"*/-->
 		<a th:href="${mainPageUrl}"><h4 th:text="${siteTitle}"></h4></a>
 		<h5>Donate:</h5>
-		<button id="donateButton_5" class="btn btn-primary express-button" onclick="_DonationPage_handleDonate(500, '5');">$5</button>
-		<button id="donateButton_10" class="btn btn-primary express-button" onclick="_DonationPage_handleDonate(1000, '10');">$10</button>
-		<button id="donateButton_18" class="btn btn-primary express-button" onclick="_DonationPage_handleDonate(1800, '18');">$18</button>
-		<button id="donateButton_27" class="btn btn-primary express-button" onclick="_DonationPage_handleDonate(2700, '27');">$27</button>
-		<br/>
-		<button id="donateButton_50" class="btn btn-primary express-button" onclick="_DonationPage_handleDonate(5000, '50');">$50</button>
-		<button id="donateButton_100" class="btn btn-primary express-button" onclick="_DonationPage_handleDonate(10000, '100');">$100</button>
-		<button id="donateButton_200" class="btn btn-primary express-button" onclick="_DonationPage_handleDonate(20000, '200');">$200</button>
-		<button id="donateButton_300" class="btn btn-primary express-button" onclick="_DonationPage_handleDonate(30000, '300');">$300</button>
+		<div class="row express-button-row">
+			<button id="donateButton_5" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(500, '5');">$5</button>
+			<button id="donateButton_10" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(1000, '10');">$10</button>
+			<button id="donateButton_18" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(1800, '18');">$18</button>
+			<button id="donateButton_27" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(2700, '27');">$27</button>
+		</div>
+		<div class="row express-button-row">
+			<button id="donateButton_50" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(5000, '50');">$50</button>
+			<button id="donateButton_100" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(10000, '100');">$100</button>
+			<button id="donateButton_200" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(20000, '200');">$200</button>
+			<button id="donateButton_300" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(30000, '300');">$300</button>
+		</div>
 		<p>Or, donate a specific amount:</p>
 		<form>
 			<div id="alertCustomDonation" role="alert" class="hidden alert alert-danger">

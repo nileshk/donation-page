@@ -35,6 +35,12 @@
 }
 
 .express-button {
-	margin-right: 10px;
+	margin-left: 5px;
+	margin-right: 5px;
 	margin-bottom: 15px;
+	width: 60px;
+}
+
+.express-button-row {
+	margin-left: 0px;
 }
