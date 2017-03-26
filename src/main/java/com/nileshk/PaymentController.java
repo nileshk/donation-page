@@ -55,6 +55,9 @@ public class PaymentController {
 	@Value("${app.collectOccupationEnabled:true}")
 	private Boolean collectOccupationEnabled = true;
 
+	@Value("${app.collectOccupationThreshold:100}")
+	private Integer collectOccupationThreshold;
+
 	public PaymentController(
 			@Value("${stripe.secretKey}") String secretKey,
 			@Value("${stripe.publishableKey}") String publishableKey) {
@@ -74,6 +77,7 @@ public class PaymentController {
 		String displaySiteTitle = isNotEmpty(siteTitle) ? siteTitle : organizationDisplayName;
 		model.addAttribute("siteTitle", displaySiteTitle);
 		model.addAttribute("collectOccupationEnabled", collectOccupationEnabled);
+		model.addAttribute("collectOccupationThreshold", collectOccupationThreshold);
 		/*
 		String displayedDonateHeader = isNotEmpty(this.donateHeader) ? this.donateHeader :
 				(isNotEmpty(organizationDisplayName)
@@ -117,9 +121,10 @@ public class PaymentController {
 			logger.info("Request LOG:");
 			logger.info(param.get("logData").toString());
 		}
-		if (param.containsKey("amount")) {
-			logger.info("Amount: " + param.get("amount"));
-			clientParam.put("amount", param.get("amount"));
+		Integer amount = (Integer) param.getOrDefault("amount", null);
+		if (amount != null) {
+			logger.info("Amount: " + amount);
+			clientParam.put("amount", amount);
 		}
 		if (param.containsKey("currency")) {
 			logger.info("Currency: " + param.get("currency"));
@@ -134,7 +139,7 @@ public class PaymentController {
 
 		if (isNotEmpty(occupation)) {
 			logger.info("Occupation: " + occupation);
-		} else if (collectOccupationEnabled /* TODO > threshold */) {
+		} else if (collectOccupationEnabled && (collectOccupationThreshold != null && collectOccupationThreshold > 0 && (amount == null || (amount > collectOccupationThreshold * 100)))) {
 			return ChargeResult.error("Occupation not provided");
 		}
 

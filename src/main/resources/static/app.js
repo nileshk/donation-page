@@ -15,6 +15,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 	//noinspection JSUnresolvedVariable
 	Stripe.setPublishableKey(publishableKey);
 	var collectOccupationEnabled = (typeof _DonationPage_collectOccupationEnabled === 'undefined') ? true : _DonationPage_collectOccupationEnabled;
+	var collectOccupationThreshold = (typeof _DonationPage_collectOccupationThreshold === 'undefined') ? 100 : _DonationPage_collectOccupationThreshold;
 
 	var submittedAmount = 0;
 	var submittedAmountStr = "";
@@ -160,7 +161,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 		submittedAmountStr = amountStr;
 
 		occupation = $('#occupationInput').val();
-		if (collectOccupationEnabled && isEmpty(occupation)) {
+		if (collectOccupationEnabled && submittedAmount > (collectOccupationThreshold * 100) && isEmpty(occupation)) {
 			$('#alertOccupation').addClass('alert').addClass('alert-danger').text("Please provide your occupation");
 			return;
 		} else {

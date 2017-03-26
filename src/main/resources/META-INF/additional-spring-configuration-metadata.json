@@ -29,6 +29,16 @@
       "name": "stripe.applyPayEnabled",
       "type": "java.lang.Boolean",
       "description": "`true` to enable Apple Pay, `false` to disable.  Defaults to `true`."
+    },
+    {
+      "name": "app.collectOccupationEnabled",
+      "type": "java.lang.Boolean",
+      "description": "if `true`, collect contributor's occupation. Default is `true`."
+    },
+    {
+      "name": "app.collectOccupationThreshold",
+      "type": "java.lang.Integer",
+      "description": "If contribution amount (in dollars) exceeds this value, occupation is required (if app.collectOccupationEnabled = `true`)."
     }
   ]
 }
