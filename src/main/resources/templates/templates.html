@@ -9,6 +9,7 @@
 
 	var _DonationPage_collectOccupationEnabled = /*[[${collectOccupationEnabled}]]*/ true;
 	var _DonationPage_collectOccupationThreshold = /*[[${collectOccupationThreshold}]]*/ 100;
+	var _DonationPage_donationLimit = /*[[${donationLimit}]]*/ -1;
 
 	/*]]>*/
 	</script>
@@ -31,19 +32,28 @@
 		<button id="donateButton_300" class="btn btn-primary express-button" onclick="_DonationPage_handleDonate(30000, '300');">$300</button>
 		<p>Or, donate a specific amount:</p>
 		<form>
+			<div id="alertCustomDonation" role="alert" class="hidden alert alert-danger">
+				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+				<span class="sr-only">Error:</span>
+				<span id="alertCustomDonationText"></span>
+			</div>
 			<fieldset class="form-group">
 				<div class="input-group">
 					<span class="input-group-addon">$</span>
-					<input type="number" class="form-control" id="donationAmount" name="amount" placeholder="Enter amount" style="width:150px"/>
+					<input type="number" class="form-control" id="donationAmount" name="amount" placeholder="Enter amount" style="width:150px" min="1"/>
 					<button id="donateButton_custom" class="btn btn-primary" style="margin-left: -2px;">Donate</button>
 				</div>
 			</fieldset>
 		</form>
+		<p>Occupation:</p>
 		<form>
 			<!--<fieldset class="form-group">
 				<div class="input-group">-->
-			<div id="alertOccupation" role="alert"></div>
-			<span>Occupation:</span><br/>
+			<div id="alertOccupation" role="alert" class="hidden alert alert-danger">
+				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+				<span class="sr-only">Error:</span>
+				<span id="alertOccupationText"></span>
+			</div>
 			<input class="form-control" id="occupationInput" placeholder="Enter occupation" style="width:250px"/>
 				<!--</div>
 			</fieldset>-->

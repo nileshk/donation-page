@@ -26,6 +26,7 @@ See a live version of it here:
   * **email.signup.url** - Page where email signup resides.  Default is `/`
   * **app.collectOccupationEnabled** - If `true`, collect contributor's occupation. Default is `true`.
   * **app.collectOccupationThreshold** - If contribution amount (in dollars) exceeds this value, occupation is required (if app.collectOccupationEnabled = `true`).
+  * **app.donationLimit** - Limit donations to a specified dollar amount (disabled by default by being set to -1)
   
 * Using Java 8 or later, to run the application:
   * java -jar stripe-payments.jar

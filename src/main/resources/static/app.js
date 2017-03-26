@@ -16,6 +16,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 	Stripe.setPublishableKey(publishableKey);
 	var collectOccupationEnabled = (typeof _DonationPage_collectOccupationEnabled === 'undefined') ? true : _DonationPage_collectOccupationEnabled;
 	var collectOccupationThreshold = (typeof _DonationPage_collectOccupationThreshold === 'undefined') ? 100 : _DonationPage_collectOccupationThreshold;
+	var donationLimit = (typeof _DonationPage_donationLimit === 'undefined') ? -1 : _DonationPage_donationLimit;
 
 	var submittedAmount = 0;
 	var submittedAmountStr = "";
@@ -161,11 +162,24 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 		submittedAmountStr = amountStr;
 
 		occupation = $('#occupationInput').val();
+		var shouldReturn = false;
+
 		if (collectOccupationEnabled && submittedAmount > (collectOccupationThreshold * 100) && isEmpty(occupation)) {
-			$('#alertOccupation').addClass('alert').addClass('alert-danger').text("Please provide your occupation");
-			return;
+			$('#alertOccupationText').text("Please provide your occupation");
+			$('#alertOccupation').removeClass("hidden");
+			shouldReturn = true;
 		} else {
-			$('#alertOccupation').removeClass("alert").addClass("alert-danger").text("");
+			$('#alertOccupation').addClass("hidden");
+		}
+		if (donationLimit > 0 && submittedAmount > (donationLimit * 100)) {
+			$('#alertCustomDonationText').text("Donation exceeds limit of $" + donationLimit + ".");
+			$('#alertCustomDonation').removeClass("hidden");
+			shouldReturn = true;
+		} else {
+			$('#alertCustomDonation').addClass("hidden");
+		}
+		if (shouldReturn) {
+			return;
 		}
 
 		if (!applePayEnabled) {

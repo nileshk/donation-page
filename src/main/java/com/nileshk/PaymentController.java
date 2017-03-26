@@ -58,6 +58,9 @@ public class PaymentController {
 	@Value("${app.collectOccupationThreshold:100}")
 	private Integer collectOccupationThreshold;
 
+	@Value("${app.donationLimit:-1}")
+	private Integer donationLimit;
+
 	public PaymentController(
 			@Value("${stripe.secretKey}") String secretKey,
 			@Value("${stripe.publishableKey}") String publishableKey) {
@@ -78,6 +81,7 @@ public class PaymentController {
 		model.addAttribute("siteTitle", displaySiteTitle);
 		model.addAttribute("collectOccupationEnabled", collectOccupationEnabled);
 		model.addAttribute("collectOccupationThreshold", collectOccupationThreshold);
+		model.addAttribute("donationLimit", donationLimit);
 		/*
 		String displayedDonateHeader = isNotEmpty(this.donateHeader) ? this.donateHeader :
 				(isNotEmpty(organizationDisplayName)
@@ -125,6 +129,11 @@ public class PaymentController {
 		if (amount != null) {
 			logger.info("Amount: " + amount);
 			clientParam.put("amount", amount);
+
+			if (donationLimit != null && donationLimit > 0 && amount > donationLimit * 100) {
+				return ChargeResult.error(String.format("$%d donation exceeds limit of $%d", amount / 100, donationLimit));
+			}
+
 		}
 		if (param.containsKey("currency")) {
 			logger.info("Currency: " + param.get("currency"));
