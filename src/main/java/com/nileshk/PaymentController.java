@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -63,6 +63,9 @@ public class PaymentController {
 	@Value("${app.donationLimit:-1}")
 	private Integer donationLimit;
 
+	@Value("${app.googleAnalyticsTrackingId:}")
+	private String googleAnalyticsTrackingId;
+
 	@Value("${vcs.build.id}")
 	private String vcsBuildId;
 
@@ -85,11 +88,14 @@ public class PaymentController {
 
 		model.addAttribute("organizationDisplayName", organizationDisplayName);
 		model.addAttribute("mainPageUrl", mainPageUrl);
-		String displaySiteTitle = isNotEmpty(siteTitle) ? siteTitle : organizationDisplayName;
+		String displaySiteTitle = isNotBlank(siteTitle) ? siteTitle : organizationDisplayName;
 		model.addAttribute("siteTitle", displaySiteTitle);
 		model.addAttribute("collectOccupationEnabled", collectOccupationEnabled);
 		model.addAttribute("collectOccupationThreshold", collectOccupationThreshold);
 		model.addAttribute("donationLimit", donationLimit);
+		if (isNotBlank(googleAnalyticsTrackingId)) {
+			model.addAttribute("googleAnalyticsTrackingId", googleAnalyticsTrackingId);
+		}
 		/*
 		String displayedDonateHeader = isNotEmpty(this.donateHeader) ? this.donateHeader :
 				(isNotEmpty(organizationDisplayName)
@@ -154,7 +160,7 @@ public class PaymentController {
 
 		String occupation = (String) param.getOrDefault("occupation", null);
 
-		if (isNotEmpty(occupation)) {
+		if (isNotBlank(occupation)) {
 			logger.info("Occupation: " + occupation);
 		} else if (collectOccupationEnabled && (collectOccupationThreshold != null && (amount == null || (amount > collectOccupationThreshold * 100)))) {
 			return ChargeResult.error("Occupation not provided");

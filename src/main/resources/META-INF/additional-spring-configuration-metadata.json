@@ -44,6 +44,16 @@
       "name": "app.donationLimit",
       "type": "java.lang.Integer",
       "description": "Limit donations to a specified dollar amount (disabled by default by being set to -1)"
+    },
+    {
+      "name": "app.googleAnalyticsTrackingId",
+      "type": "java.lang.String",
+      "description": "Google Analytics Tracking Id (populating this enables Google Analytics)."
+    },
+    {
+      "name": "vcs.build.id",
+      "type": "java.lang.String",
+      "description": "Version control build id (populated during build, do not override this)."
     }
   ]
 }
