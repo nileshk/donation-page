@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -61,6 +63,9 @@ public class PaymentController {
 	@Value("${app.donationLimit:-1}")
 	private Integer donationLimit;
 
+	@Value("${vcs.build.id}")
+	private String vcsBuildId;
+
 	public PaymentController(
 			@Value("${stripe.secretKey}") String secretKey,
 			@Value("${stripe.publishableKey}") String publishableKey) {
@@ -75,6 +80,9 @@ public class PaymentController {
 	}
 
 	private void defaultModel(Model model) {
+		// Use current time as vcs build id if in developement
+		model.addAttribute("vcsBuildId", (isBlank(vcsBuildId) || "@buildNumber@".equals(vcsBuildId)) ? String.valueOf(new Date().getTime()) : vcsBuildId);
+
 		model.addAttribute("organizationDisplayName", organizationDisplayName);
 		model.addAttribute("mainPageUrl", mainPageUrl);
 		String displaySiteTitle = isNotEmpty(siteTitle) ? siteTitle : organizationDisplayName;
@@ -189,6 +197,7 @@ public class PaymentController {
 			@RequestParam(value = "amount", required = true) Long amount,
 			@RequestParam(value = "email", required = false, defaultValue = "") String email,
 			Model model) {
+		defaultModel(model);
 		model.addAttribute("amount", String.valueOf(amount / 100));
 		model.addAttribute("email", email);
 		try {
