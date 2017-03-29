@@ -9,6 +9,7 @@ import com.stripe.exception.InvalidRequestException;
 import com.stripe.model.Charge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -22,6 +23,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -69,11 +71,19 @@ public class PaymentController {
 	@Value("${vcs.build.id}")
 	private String vcsBuildId;
 
+	final List<PaymentPostProcessor> paymentPostProcessors;
+	//PaymentPostProcessor paymentPostProcessor;
+
+	@Autowired
 	public PaymentController(
 			@Value("${stripe.secretKey}") String secretKey,
-			@Value("${stripe.publishableKey}") String publishableKey) {
+			@Value("${stripe.publishableKey}") String publishableKey,
+			/* PaymentPostProcessor paymentPostProcessor*/
+			List<PaymentPostProcessor> paymentPostProcessors) {
 		Stripe.apiKey = secretKey;
 		this.publishableKey = publishableKey;
+		//this.paymePostProcessor = paymentPostProcessor;
+		this.paymentPostProcessors = paymentPostProcessors;
 	}
 
 	@RequestMapping(value = "/", method = GET)
@@ -134,6 +144,9 @@ public class PaymentController {
 			@RequestBody Map<String, Object> param
 	) {
 		logger.info("--- Submitting Payment ---");
+		if (param != null) {
+			logger.info(param.toString());
+		}
 		Map<String, Object> clientParam = new HashMap<>();
 		if (param.containsKey("logData")) {
 			logger.info("Request LOG:");
@@ -176,6 +189,8 @@ public class PaymentController {
 			logger.info("Charge Result:");
 			logger.info(chargeResult.toJson());
 			logger.info("-------------------------");
+			postProcess(param, chargeResult);
+			logger.info("Post-processing initiated");
 			return new ChargeResult(chargeResult);
 		} catch (AuthenticationException e) {
 			logger.error("AuthenticationException", e);
@@ -195,6 +210,20 @@ public class PaymentController {
 		} catch (RuntimeException e) {
 			logger.error("RuntimeException", e);
 			return ChargeResult.error("Application error occurred, please contact admin:" + e.getMessage());
+		}
+	}
+
+	private void postProcess(Map<String, Object> param, Charge charge) {
+		try {
+			if (paymentPostProcessors != null) {
+				for (PaymentPostProcessor paymentPostProcessor : paymentPostProcessors) {
+					if (paymentPostProcessor != null) {
+						paymentPostProcessor.postProcessPayment(param, charge);
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Failure iterating over payment post processors", e);
 		}
 	}
 

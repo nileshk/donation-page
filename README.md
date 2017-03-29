@@ -28,6 +28,7 @@ See a live version of it here:
   * **app.collectOccupationThreshold** - If contribution amount (in dollars) exceeds this value, occupation is required (if app.collectOccupationEnabled = `true`).
   * **app.donationLimit** - Limit donations to a specified dollar amount (disabled by default by being set to -1)
   * **app.googleAnalyticsTrackingId** - Google Analytics Tracking Id (populating this enables Google Analytics).
+  * **app.googleSheetId** - Google Sheet Id to write log to (populating this enables it). **WORK IN PROGRESS**
   
 * Using Java 8 or later, to run the application:
   * java -jar stripe-payments.jar

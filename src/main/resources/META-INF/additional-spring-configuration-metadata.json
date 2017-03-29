@@ -51,6 +51,11 @@
       "description": "Google Analytics Tracking Id (populating this enables Google Analytics)."
     },
     {
+      "name": "app.googleSheetId",
+      "type": "java.lang.String",
+      "description": "Google Sheet Id to write log to (populating this enables it)."
+    },
+    {
       "name": "vcs.build.id",
       "type": "java.lang.String",
       "description": "Version control build id (populated during build, do not override this)."
