@@ -167,8 +167,10 @@ public class PaymentController {
 			clientParam.put("currency", param.get("currency"));
 		}
 		if (param.containsKey("description")) {
-			logger.info("Description: " + param.get("description"));
-			clientParam.put("description", param.get("description"));
+			String description = (String)param.get("description");
+			logger.info("Description: " + description);
+			clientParam.put("description", description);
+			clientParam.put("receipt_email", description);
 		}
 
 		String occupation = (String) param.getOrDefault("occupation", null);
@@ -181,6 +183,7 @@ public class PaymentController {
 
 		clientParam.put("source", param.get("id"));
 		try {
+			logger.info(clientParam.toString());
 			Charge chargeResult = Charge.create(clientParam);
 			logger.info("Charge successful");
 			if (param.containsKey("description")) {
