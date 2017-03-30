@@ -20,8 +20,24 @@
 	<div class="donation-selection">
 		<!--/*@thymesVar id="mainPageUrl" type="string"*/-->
 		<!--/*@thymesVar id="siteTitle" type="string"*/-->
-		<a th:href="${mainPageUrl}"><h4 th:text="${siteTitle}"></h4></a>
-		<h5>Donate:</h5>
+		<div class="well well-sm" style="text-align: center">
+			<h4 class="display-3">Contribute to</h4>
+			<a th:href="${mainPageUrl}" class="site-title"><h4 th:text="${siteTitle}"></h4></a>
+		</div>
+		<h5>Occupation or Business Type:</h5>
+		<form>
+			<!--<fieldset class="form-group">
+				<div class="input-group">-->
+			<div id="alertOccupation" role="alert" class="hidden alert alert-danger">
+				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+				<span class="sr-only">Error:</span>
+				<span id="alertOccupationText"></span>
+			</div>
+			<input class="form-control" id="occupationInput" placeholder="Enter occupation or business type" style="width:250px"/>
+				<!--</div>
+			</fieldset>-->
+		</form>
+		<h5>Amount:</h5>
 		<div class="row express-button-row">
 			<button id="donateButton_5" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(500, '5');">$5</button>
 			<button id="donateButton_10" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(1000, '10');">$10</button>
@@ -34,7 +50,7 @@
 			<button id="donateButton_200" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(20000, '200');">$200</button>
 			<button id="donateButton_300" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(30000, '300');">$300</button>
 		</div>
-		<p>Or, donate a specific amount:</p>
+		<h5>Or a specific amount:</h5>
 		<form>
 			<div id="alertCustomDonation" role="alert" class="hidden alert alert-danger">
 				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
@@ -48,19 +64,6 @@
 					<button id="donateButton_custom" class="btn btn-primary" style="margin-left: -2px;">Donate</button>
 				</div>
 			</fieldset>
-		</form>
-		<p>Occupation or Business Type:</p>
-		<form>
-			<!--<fieldset class="form-group">
-				<div class="input-group">-->
-			<div id="alertOccupation" role="alert" class="hidden alert alert-danger">
-				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-				<span class="sr-only">Error:</span>
-				<span id="alertOccupationText"></span>
-			</div>
-			<input class="form-control" id="occupationInput" placeholder="Enter occupation or business type" style="width:250px"/>
-				<!--</div>
-			</fieldset>-->
 		</form>
 	</div>
 	<br/>

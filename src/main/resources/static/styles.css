@@ -1,5 +1,9 @@
 /* Common Styles */
 
+.container {
+	width: 340px;
+}
+
 .alert-top {
 	font-weight: bold;
 }
