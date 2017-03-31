@@ -105,7 +105,6 @@ public class GoogleSheetsService implements PaymentPostProcessor {
 		contentToAppend.setMajorDimension("ROWS");
 		List<List<Object>> list = new ArrayList<>();
 		List<Object> e = new ArrayList<>();
-		Map<String, Object> token = (Map<String, Object>) map.get("token");
 		String name = "";
 		String address1 = "";
 		String address2 = "";
@@ -114,9 +113,10 @@ public class GoogleSheetsService implements PaymentPostProcessor {
 		String zip = "";
 		String country = "";
 		String email = "";
-		if (token != null) {
-			if (token.containsKey("shippingContact")) {
-				Map<String, Object> shippingMap = (Map<String, Object>) token.get("shippingContact");
+		if (map.containsKey("applePayResult")) {
+			Map<String, Object> applePayResult = (Map<String, Object>) map.get("applePayResult");
+			if (applePayResult.containsKey("shippingContact")) {
+				Map<String, Object> shippingMap = (Map<String, Object>) applePayResult.get("shippingContact");
 				name = (shippingMap.getOrDefault("givenName", "") + " " + shippingMap.getOrDefault("familyName", "")).trim();
 				if (shippingMap.containsKey("addressLines")) {
 					Object addressLinesObj = shippingMap.get("addressLines");
@@ -146,6 +146,9 @@ public class GoogleSheetsService implements PaymentPostProcessor {
 					email = (String) shippingMap.getOrDefault("emailAddress", "");
 				}
 			}
+		}
+		Map<String, Object> token = (Map<String, Object>) map.get("token");
+		if (token != null) {
 			Map<String, Object> card = (Map<String, Object>) token.get("card");
 			if (card != null) {
 				if (isBlank(name)) {

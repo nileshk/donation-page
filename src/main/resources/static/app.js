@@ -105,6 +105,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 					currency: 'usd',
 					description: result.shippingContact.emailAddress,
 					occupation: occupation,
+					applePayResult: result,
 					logData: JSON.stringify(result)
 				};
 
