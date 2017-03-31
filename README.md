@@ -43,6 +43,11 @@ See a live version of it here:
 * Apple Pay for Web only works in Safari. Your visitors will need to know that it doesn't work in embedded browsers such as those built into Facebook and Twitter clients 
 * The `/fragment` page serves a version of the site without any JS and CSS files loaded.  This is for use, for example, for loading the HTML another application (e.g. Wordpress) _without_ using an `iframe`.  You will need to load all the JS and CSS files in your parent application's page, including `app.js` file, and resolve any style conflicts your parent application may have with Bootstrap CSS.   
 
+## Testing ##
+Testing of multiple devices and browsers for this project is being done with:
+
+<a href="https://www.browserstack.com"><img src="doc/img/BrowserStack.svg" height="50"/></a>
+
 ## License ##
 
 Donatation Page is licensed under MIT see `LICENSE` file
