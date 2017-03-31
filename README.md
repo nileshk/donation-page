@@ -46,7 +46,7 @@ See a live version of it here:
 ## Testing ##
 Testing of multiple devices and browsers for this project is being done with:
 
-<a href="https://www.browserstack.com"><img src="doc/img/BrowserStack.svg" height="50"/></a>
+<a href="https://www.browserstack.com"><img src="https://nileshk.github.io/donation-page/doc/img/BrowserStack.svg" height="50"/></a>
 
 ## License ##
 
