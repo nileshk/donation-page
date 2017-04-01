@@ -58,6 +58,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 				amount: submittedAmount,
 				description: token.email,
 				occupation: occupation,
+				collectOccupationEnabled: collectOccupationEnabled,
 				token: token
 			};
 			// console.log(param);
@@ -105,6 +106,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 					currency: 'usd',
 					description: result.shippingContact.emailAddress,
 					occupation: occupation,
+					collectOccupationEnabled: collectOccupationEnabled,
 					applePayResult: result,
 					logData: JSON.stringify(result)
 				};

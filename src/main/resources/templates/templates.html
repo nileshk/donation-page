@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 
 <html xmlns:th="http://www.thymeleaf.org">
+
+<!--/*@thymesVar id="mainPageUrl" type="string"*/-->
+<!--/*@thymesVar id="siteTitle" type="string"*/-->
+<!--/*@thymesVar id="pagePurpose" type="java.lang.String"*/-->
+<!--/*@thymesVar id="collectOccupationEnabled" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="allowSpecificAmount" type="java.lang.Boolean"*/-->
 <body>
 
 <span th:fragment="js">
@@ -18,25 +24,25 @@
 <div th:fragment="container">
 	<div id="alertTop" class="alert-top" role="alert"></div>
 	<div class="donation-selection">
-		<!--/*@thymesVar id="mainPageUrl" type="string"*/-->
-		<!--/*@thymesVar id="siteTitle" type="string"*/-->
 		<div class="well well-sm" style="text-align: center">
-			<h4 class="display-3">Contribute to</h4>
+			<h4 class="display-3" th:text="${pagePurpose}">Contribute to</h4>
 			<a th:href="${mainPageUrl}" class="site-title"><h4 th:text="${siteTitle}"></h4></a>
 		</div>
-		<h5>Occupation or Business Type:</h5>
-		<form>
-			<!--<fieldset class="form-group">
-				<div class="input-group">-->
-			<div id="alertOccupation" role="alert" class="hidden alert alert-danger">
-				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-				<span class="sr-only">Error:</span>
-				<span id="alertOccupationText"></span>
-			</div>
-			<input class="form-control" id="occupationInput" placeholder="Enter occupation or business type" style="width:250px"/>
+		<div th:if="${collectOccupationEnabled}">
+			<h5>Occupation or Business Type:</h5>
+			<form>
+				<!--<fieldset class="form-group">
+					<div class="input-group">-->
+				<div id="alertOccupation" role="alert" class="hidden alert alert-danger">
+					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+					<span class="sr-only">Error:</span>
+					<span id="alertOccupationText"></span>
+				</div>
+				<input class="form-control" id="occupationInput" placeholder="Enter occupation or business type" style="width:250px"/>
 				<!--</div>
 			</fieldset>-->
-		</form>
+			</form>
+		</div>
 		<h5>Amount:</h5>
 		<div class="row express-button-row">
 			<button id="donateButton_5" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(500, '5');">$5</button>
@@ -50,21 +56,23 @@
 			<button id="donateButton_200" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(20000, '200');">$200</button>
 			<button id="donateButton_300" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(30000, '300');">$300</button>
 		</div>
-		<h5>Or a specific amount:</h5>
-		<form>
-			<div id="alertCustomDonation" role="alert" class="hidden alert alert-danger">
-				<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-				<span class="sr-only">Error:</span>
-				<span id="alertCustomDonationText"></span>
-			</div>
-			<fieldset class="form-group">
-				<div class="input-group">
-					<span class="input-group-addon">$</span>
-					<input type="number" class="form-control" id="donationAmount" name="amount" placeholder="Enter amount" style="width:150px" min="1"/>
-					<button id="donateButton_custom" class="btn btn-primary" style="margin-left: -2px;">Donate</button>
+		<div th:if="${allowSpecificAmount == null || allowSpecificAmount}">
+			<h5>Or a specific amount:</h5>
+			<form>
+				<div id="alertCustomDonation" role="alert" class="hidden alert alert-danger">
+					<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+					<span class="sr-only">Error:</span>
+					<span id="alertCustomDonationText"></span>
 				</div>
-			</fieldset>
-		</form>
+				<fieldset class="form-group">
+					<div class="input-group">
+						<span class="input-group-addon">$</span>
+						<input type="number" class="form-control" id="donationAmount" name="amount" placeholder="Enter amount" style="width:150px" min="1"/>
+						<button id="donateButton_custom" class="btn btn-primary" style="margin-left: -2px;">Donate</button>
+					</div>
+				</fieldset>
+			</form>
+		</div>
 	</div>
 	<br/>
 	<br/>

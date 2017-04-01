@@ -36,6 +36,8 @@ public class PaymentController {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+	private static final String COLLECT_OCCUPATION_ENABLED_KEY = "collectOccupationEnabled";
+
 	private String publishableKey;
 
 	@Value("${org.displayName:}")
@@ -100,9 +102,10 @@ public class PaymentController {
 		model.addAttribute("mainPageUrl", mainPageUrl);
 		String displaySiteTitle = isNotBlank(siteTitle) ? siteTitle : organizationDisplayName;
 		model.addAttribute("siteTitle", displaySiteTitle);
-		model.addAttribute("collectOccupationEnabled", collectOccupationEnabled);
+		model.addAttribute(COLLECT_OCCUPATION_ENABLED_KEY, collectOccupationEnabled);
 		model.addAttribute("collectOccupationThreshold", collectOccupationThreshold);
 		model.addAttribute("donationLimit", donationLimit);
+		model.addAttribute("pagePurpose", "Contribute to");
 		if (isNotBlank(googleAnalyticsTrackingId)) {
 			model.addAttribute("googleAnalyticsTrackingId", googleAnalyticsTrackingId);
 		}
@@ -116,12 +119,27 @@ public class PaymentController {
 	}
 
 	/**
+	 * @param model
 	 * @return Page that is an HTML fragment for integrating into other apps
 	 */
 	@RequestMapping(value = "/fragment", method = GET)
 	public String fragment(Model model) {
 		defaultModel(model);
 		return "fragment";
+	}
+
+	/**
+	 * Pay Dues page
+	 * @param model
+	 * @return page for paying dues
+	 */
+	@RequestMapping(value = "/dues", method = GET)
+	public String payDues(Model model) {
+		defaultModel(model);
+		model.addAttribute(COLLECT_OCCUPATION_ENABLED_KEY, false); // Don't collect occupation for paying dues (this should be on file for members)
+		model.addAttribute("pagePurpose", "Pay Dues for");
+		model.addAttribute("allowSpecificAmount", false);
+		return "index";
 	}
 
 	@RequestMapping(value = "/getConfig", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -144,6 +162,9 @@ public class PaymentController {
 			@RequestBody Map<String, Object> param
 	) {
 		logger.info("--- Submitting Payment ---");
+
+		Boolean collectOccupationEnabled = this.collectOccupationEnabled;
+
 		if (param != null) {
 			logger.info(param.toString());
 		}
@@ -174,6 +195,13 @@ public class PaymentController {
 		}
 
 		String occupation = (String) param.getOrDefault("occupation", null);
+
+		if (param.containsKey(COLLECT_OCCUPATION_ENABLED_KEY)) {
+			collectOccupationEnabled = (Boolean) param.get(COLLECT_OCCUPATION_ENABLED_KEY);
+		}
+		if (collectOccupationEnabled == null) {
+			collectOccupationEnabled = false;
+		}
 
 		if (isNotBlank(occupation)) {
 			logger.info("Occupation: " + occupation);
