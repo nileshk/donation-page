@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <!--suppress JSUnresolvedLibraryURL -->
 <html xmlns:th="http://www.thymeleaf.org">
+
+<!--/*@thymesVar id="amount" type="string"*/-->
+<!--/*@thymesVar id="mainPageUrl" type="string"*/-->
+
 <head>
 	<title>Static</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -11,14 +15,16 @@
 <body>
 <div class="container">
 	<h2>Thank you for your contribution!</h2>
-	<!--/*@thymesVar id="amount" type="string"*/-->
 	<p th:text="'Your contribution of $' + ${amount} + ' has been received.'"/>
+
+	<a th:href="${mainPageUrl}">Click here to visit the main web site</a>
+
 	<!--/*@thymesVar id="email" type="string"*/-->
 	<!--/* <p th:text="${email}"/> */-->
 	<!--/* TODO Signup page URL should be optional */-->
 	<!--/*@thymesVar id="emailSignupUrl" type="string"*/-->
 	<!--/*@thymesVar id="email_urlEncoded" type="string"*/-->
-	<a th:href="${emailSignupUrl} + '?email=' + ${email_urlEncoded}">Click here to visit the e-mail signup page to sign up to receive e-mails</a>
+	<!--<a th:href="${emailSignupUrl} + '?email=' + ${email_urlEncoded}">Click here to visit the e-mail signup page to sign up to receive e-mails</a>-->
 </div>
 
 <script type="text/javascript" src="webjars/jquery/2.0.3/jquery.min.js"></script>
