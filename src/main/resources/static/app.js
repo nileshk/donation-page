@@ -92,9 +92,11 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 	function beginApplePay() {
 		hideMultiPay();
 		var shippingContactFields = ['email', 'name', 'postalAddress'];
+		/* Uncomment this if we don't want to require address for paying dues
 		if (payDuesPage) {
 			shippingContactFields = ['email', 'name'];
 		}
+		*/
 		var paymentRequest = {
 			requiredShippingContactFields: shippingContactFields,
 			countryCode: 'US',
