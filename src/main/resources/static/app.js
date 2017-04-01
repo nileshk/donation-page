@@ -17,6 +17,8 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 	var collectOccupationEnabled = (typeof _DonationPage_collectOccupationEnabled === 'undefined') ? true : _DonationPage_collectOccupationEnabled;
 	var collectOccupationThreshold = (typeof _DonationPage_collectOccupationThreshold === 'undefined') ? 100 : _DonationPage_collectOccupationThreshold;
 	var donationLimit = (typeof _DonationPage_donationLimit === 'undefined') ? -1 : _DonationPage_donationLimit;
+	var payDuesPage = (typeof _DonationPage_payDuesPage === 'undefined') ? false : _DonationPage_payDuesPage;
+	var pagePurpose = (typeof _DonationPage_pagePurpose === 'undefined') ? "donation" : _DonationPage_pagePurpose;
 
 	var submittedAmount = 0;
 	var submittedAmountStr = "";
@@ -59,6 +61,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 				description: token.email,
 				occupation: occupation,
 				collectOccupationEnabled: collectOccupationEnabled,
+				pagePurpose: pagePurpose,
 				token: token
 			};
 			// console.log(param);
@@ -88,8 +91,12 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 
 	function beginApplePay() {
 		hideMultiPay();
+		var shippingContactFields = ['email', 'name', 'postalAddress'];
+		if (payDuesPage) {
+			shippingContactFields = ['email', 'name'];
+		}
 		var paymentRequest = {
-			requiredShippingContactFields: ['email', 'name', 'postalAddress'],
+			requiredShippingContactFields: shippingContactFields,
 			countryCode: 'US',
 			currencyCode: 'USD',
 			total: {
@@ -107,6 +114,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 					description: result.shippingContact.emailAddress,
 					occupation: occupation,
 					collectOccupationEnabled: collectOccupationEnabled,
+					pagePurpose: pagePurpose,
 					applePayResult: result,
 					logData: JSON.stringify(result)
 				};

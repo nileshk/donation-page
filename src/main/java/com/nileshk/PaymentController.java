@@ -105,7 +105,8 @@ public class PaymentController {
 		model.addAttribute(COLLECT_OCCUPATION_ENABLED_KEY, collectOccupationEnabled);
 		model.addAttribute("collectOccupationThreshold", collectOccupationThreshold);
 		model.addAttribute("donationLimit", donationLimit);
-		model.addAttribute("pagePurpose", "Contribute to");
+		model.addAttribute("pagePurpose", "donation");
+		model.addAttribute("pagePurposeText", "Contribute to");
 		if (isNotBlank(googleAnalyticsTrackingId)) {
 			model.addAttribute("googleAnalyticsTrackingId", googleAnalyticsTrackingId);
 		}
@@ -137,8 +138,11 @@ public class PaymentController {
 	public String payDues(Model model) {
 		defaultModel(model);
 		model.addAttribute(COLLECT_OCCUPATION_ENABLED_KEY, false); // Don't collect occupation for paying dues (this should be on file for members)
-		model.addAttribute("pagePurpose", "Pay Dues for");
+		model.addAttribute("pagePurposeText", "Pay Dues for");
 		model.addAttribute("allowSpecificAmount", false);
+		model.addAttribute("donateButtonsEnabled", false);
+		model.addAttribute("payDuesPage", true);
+		model.addAttribute("pagePurpose", "dues");
 		return "index";
 	}
 

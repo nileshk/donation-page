@@ -196,10 +196,11 @@ public class GoogleSheetsService implements PaymentPostProcessor {
 		e.add(trimToEmpty(country));
 		e.add(trimToEmpty((String) map.getOrDefault("occupation", "")));
 		e.add(trimToEmpty(email));
+		e.add(trimToEmpty((String) map.getOrDefault("pagePurpose", "unknown")));
 		list.add(e);
 		contentToAppend.setValues(list);
 		AppendValuesResponse appendValuesResponse = service.spreadsheets().values()
-				.append(spreadsheetId, "Transactions!A:K", contentToAppend)
+				.append(spreadsheetId, "Transactions!A:L", contentToAppend)
 				.setValueInputOption("RAW")
 				.execute();
 		logger.info(appendValuesResponse.toPrettyString());

@@ -5,8 +5,11 @@
 <!--/*@thymesVar id="mainPageUrl" type="string"*/-->
 <!--/*@thymesVar id="siteTitle" type="string"*/-->
 <!--/*@thymesVar id="pagePurpose" type="java.lang.String"*/-->
+<!--/*@thymesVar id="pagePurposeText" type="java.lang.String"*/-->
 <!--/*@thymesVar id="collectOccupationEnabled" type="java.lang.Boolean"*/-->
-<!--/*@thymesVar id="allowSpecificAmount" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="allowSpecificAmount" type="java.lang.Boolean"*/--><!-- Default: true -->
+<!--/*@thymesVar id="donateButtonsEnabled" type="java.lang.Boolean"*/--><!-- Default: true -->
+<!--/*@thymesVar id="payDuesPage" type="java.lang.Boolean"*/--><!-- Default: false -->
 <body>
 
 <span th:fragment="js">
@@ -16,6 +19,8 @@
 	var _DonationPage_collectOccupationEnabled = /*[[${collectOccupationEnabled}]]*/ true;
 	var _DonationPage_collectOccupationThreshold = /*[[${collectOccupationThreshold}]]*/ 100;
 	var _DonationPage_donationLimit = /*[[${donationLimit}]]*/ -1;
+	var _DonationPage_payDuesPage = /*[[${payDuesPage}]]*/ false;
+	var _DonationPage_pagePurpose = /*[[${pagePurpose}]]*/ "donation";
 
 	/*]]>*/
 	</script>
@@ -25,7 +30,7 @@
 	<div id="alertTop" class="alert-top" role="alert"></div>
 	<div class="donation-selection">
 		<div class="well well-sm" style="text-align: center">
-			<h4 class="display-3" th:text="${pagePurpose}">Contribute to</h4>
+			<h4 class="display-3" th:text="${pagePurposeText}">Contribute to</h4>
 			<a th:href="${mainPageUrl}" class="site-title"><h4 th:text="${siteTitle}"></h4></a>
 		</div>
 		<div th:if="${collectOccupationEnabled}">
@@ -43,18 +48,26 @@
 			</fieldset>-->
 			</form>
 		</div>
-		<h5>Amount:</h5>
-		<div class="row express-button-row">
-			<button id="donateButton_5" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(500, '5');">$5</button>
-			<button id="donateButton_10" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(1000, '10');">$10</button>
-			<button id="donateButton_18" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(1800, '18');">$18</button>
-			<button id="donateButton_27" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(2700, '27');">$27</button>
+		<div th:if="${donateButtonsEnabled == null or donateButtonsEnabled}">
+			<h5>Amount:</h5>
+			<div class="row express-button-row">
+				<button id="donateButton_5" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(500, '5');">$5</button>
+				<button id="donateButton_10" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(1000, '10');">$10</button>
+				<button id="donateButton_18" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(1800, '18');">$18</button>
+				<button id="donateButton_27" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(2700, '27');">$27</button>
+			</div>
+			<div class="row express-button-row">
+				<button id="donateButton_50" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(5000, '50');">$50</button>
+				<button id="donateButton_100" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(10000, '100');">$100</button>
+				<button id="donateButton_200" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(20000, '200');">$200</button>
+				<button id="donateButton_300" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(30000, '300');">$300</button>
+			</div>
 		</div>
-		<div class="row express-button-row">
-			<button id="donateButton_50" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(5000, '50');">$50</button>
-			<button id="donateButton_100" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(10000, '100');">$100</button>
-			<button id="donateButton_200" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(20000, '200');">$200</button>
-			<button id="donateButton_300" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(30000, '300');">$300</button>
+		<div th:if="${payDuesPage != null and payDuesPage}">
+			<h5>Press button to pay dues:</h5>
+			<div class="row express-button-row">
+				<button id="payDuesButton" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(2700, '27');">$27</button>
+			</div>
 		</div>
 		<div th:if="${allowSpecificAmount == null || allowSpecificAmount}">
 			<h5>Or a specific amount:</h5>
