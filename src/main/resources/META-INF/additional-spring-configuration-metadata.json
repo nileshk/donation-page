@@ -59,6 +59,11 @@
       "name": "vcs.build.id",
       "type": "java.lang.String",
       "description": "Version control build id (populated during build, do not override this)."
+    },
+    {
+      "name": "app.clientLoggingEnabled",
+      "type": "java.lang.Boolean",
+      "description": "Log client messages to server. Default is `true`."
     }
   ]
 }

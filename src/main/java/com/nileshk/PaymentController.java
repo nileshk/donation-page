@@ -40,6 +40,9 @@ public class PaymentController {
 
 	private String publishableKey;
 
+	@Value("${app.clientLoggingEnabled:true}")
+	private Boolean clientLoggingEnabled = true;
+
 	@Value("${org.displayName:}")
 	private String organizationDisplayName = "";
 
@@ -98,6 +101,7 @@ public class PaymentController {
 		// Use current time as vcs build id if in developement
 		model.addAttribute("vcsBuildId", (isBlank(vcsBuildId) || "@buildNumber@".equals(vcsBuildId)) ? String.valueOf(new Date().getTime()) : vcsBuildId);
 
+		model.addAttribute("clientLoggingEnabled", clientLoggingEnabled);
 		model.addAttribute("organizationDisplayName", organizationDisplayName);
 		model.addAttribute("mainPageUrl", mainPageUrl);
 		String displaySiteTitle = isNotBlank(siteTitle) ? siteTitle : organizationDisplayName;

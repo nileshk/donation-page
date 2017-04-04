@@ -23,11 +23,37 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 	var donationLimit = (typeof app.donationLimit === 'undefined') ? -1 : app.donationLimit;
 	var payDuesPage = (typeof app.payDuesPage === 'undefined') ? false : app.payDuesPage;
 	var pagePurpose = (typeof app.pagePurpose === 'undefined') ? "donation" : app.pagePurpose;
+	var clientLoggingEnabled = (typeof app.clientLoggingEnabled === 'undefined') ? true : app.clientLoggingEnabled;
 
 	var submittedAmount = 0;
 	var submittedAmountStr = "";
 	var applePayEnabled = false;
 	var occupation = "";
+
+	function log(logObject) {
+		setTimeout(function() {
+			if (clientLoggingEnabled) {
+				$.ajax({
+					type: 'POST',
+					url: _stripePaymentsBaseUrl + 'log',
+					data: JSON.stringify(logObject),
+					contentType: "application/json",
+					dataType: 'json'
+				}).fail(function(jqXHR, textStatus, errorThrown) {
+					if (window.console) {
+						console.log(textStatus + ": " + errorThrown);
+						console.log("Failed to log: ");
+						console.log(logObject);
+					}
+				});
+			}
+			if (window.console) {
+				console.log(logObject);
+			}
+		}, 10);
+	}
+
+	log('Initializing...');
 
 	function isEmpty(str) {
 	    return (!str || 0 === str.length);
@@ -42,6 +68,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 	}
 
 	function errorDialog(errorMessage) {
+		hideProcessingPayment();
 		$("#errorMessage").text(errorMessage);
 		$('#errorDialog').modal();
 		hideMultiPay();
@@ -94,6 +121,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 	});
 
 	function beginApplePay() {
+		log('Beginning Apple Pay...');
 		hideMultiPay();
 		var shippingContactFields = ['email', 'name', 'postalAddress'];
 		/* Uncomment this if we don't want to require address for paying dues
@@ -110,8 +138,12 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 				amount: submittedAmountStr
 			}
 		};
+		log('Payment request:');
+		log(paymentRequest);
 		var session = Stripe.applePay.buildSession(paymentRequest,
 			function(result, completion) {
+				log('Apple Pay result:');
+				log(result);
 				$('#processingPaymentDialog').modal();
 				var param = {
 					id: result.token.id,
@@ -124,7 +156,6 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 					applePayResult: result,
 					logData: JSON.stringify(result)
 				};
-
 				$.ajax({
 						type: 'POST',
 						url: _stripePaymentsBaseUrl + 'submitPayment',
@@ -132,11 +163,12 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 						contentType: "application/json",
 						dataType: 'json'
 				}).done(function(data) {
-					completion(ApplePaySession.STATUS_SUCCESS);
 					// You can now redirect the user to a receipt page, etc.
 					if (!data.error) {
+						completion(ApplePaySession.STATUS_SUCCESS);
 						doSuccess(data.amount, data.email);
 					} else {
+						completion(ApplePaySession.STATUS_FAILURE);
 						errorDialog(data.errorMessage);
 					}
 				}).fail(function(x, textStatus, errorThrown) {
@@ -163,6 +195,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 			description: 'Donate $' + submittedAmountStr,
 			amount: submittedAmount
 		});
+		log('Doing credit card donate');
 	}
 
 	function hideMultiPay() {
@@ -180,18 +213,25 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 
 		occupation = $('#occupationInput').val();
 		var shouldReturn = false;
+		log('Selected amount: $' + submittedAmountStr);
 
 		if (collectOccupationEnabled && submittedAmount > (collectOccupationThreshold * 100) && isEmpty(occupation)) {
 			$('#alertOccupationText').text("Please provide your occupation");
 			$('#alertOccupation').removeClass("hidden");
 			shouldReturn = true;
+			log('Occupation not provided');
 		} else {
 			$('#alertOccupation').addClass("hidden");
+			if (!isEmpty(occupation)) {
+				log("Occupation: " + occupation);
+			}
 		}
 		if (donationLimit > 0 && submittedAmount > (donationLimit * 100)) {
-			$('#alertCustomDonationText').text("Donation exceeds limit of $" + donationLimit + ".");
+			var donationLimitErrorText = "Donation exceeds limit of $" + donationLimit + ".";
+			$('#alertCustomDonationText').text(donationLimitErrorText);
 			$('#alertCustomDonation').removeClass("hidden");
 			shouldReturn = true;
+			log(donationLimitErrorText);
 		} else {
 			$('#alertCustomDonation').addClass("hidden");
 		}
@@ -205,6 +245,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 			$('#donationAmountAlert').text("Amount: $" + submittedAmountStr);
 			//$('.donation-selection').hide();
 			$('#multi-pay-options').modal();
+			log('Showing multiple pay options');
 		}
 	}
 
@@ -237,13 +278,15 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 		Stripe.applePay.checkAvailability(function(available) {
 			if (available) {
 				applePayEnabled = true;
-				// console.log("Apple Pay enabled");
+				log("Apple Pay enabled");
 				//document.getElementById('apple-pay-button').style.display = 'block';
 			} else {
-				// console.log("Apple Pay not available");
+				log("Apple Pay not available");
 			}
 		});
 	}
+
+	log('Initialization complete');
 }
 $(document).ready(function() {
 	$.ajax({
