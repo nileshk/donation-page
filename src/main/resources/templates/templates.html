@@ -16,11 +16,13 @@
 	<script th:inline="javascript">
 	/*<![CDATA[*/
 
-	var _DonationPage_collectOccupationEnabled = /*[[${collectOccupationEnabled}]]*/ true;
-	var _DonationPage_collectOccupationThreshold = /*[[${collectOccupationThreshold}]]*/ 100;
-	var _DonationPage_donationLimit = /*[[${donationLimit}]]*/ -1;
-	var _DonationPage_payDuesPage = /*[[${payDuesPage}]]*/ false;
-	var _DonationPage_pagePurpose = /*[[${pagePurpose}]]*/ "donation";
+	if (typeof _DONATION_PAGE_APP_ === 'undefined') { var _DONATION_PAGE_APP_ = {}; }
+
+	_DONATION_PAGE_APP_.collectOccupationEnabled = /*[[${collectOccupationEnabled}]]*/ true;
+	_DONATION_PAGE_APP_.collectOccupationThreshold = /*[[${collectOccupationThreshold}]]*/ 100;
+	_DONATION_PAGE_APP_.donationLimit = /*[[${donationLimit}]]*/ -1;
+	_DONATION_PAGE_APP_.payDuesPage = /*[[${payDuesPage}]]*/ false;
+	_DONATION_PAGE_APP_.pagePurpose = /*[[${pagePurpose}]]*/ "donation";
 
 	/*]]>*/
 	</script>

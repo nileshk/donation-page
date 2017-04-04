@@ -1,3 +1,5 @@
+if (typeof _DONATION_PAGE_APP_ === 'undefined') { var _DONATION_PAGE_APP_ = {}; }
+
 var _stripePaymentsBaseUrl = (typeof _stripePaymentsBaseUrl === 'undefined') ? '' : _stripePaymentsBaseUrl;
 
 var _DonationPage_handleDonate;
@@ -12,13 +14,15 @@ if (!String.prototype.startsWith) {
 
 function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured) {
 	"use strict";
+	var app = _DONATION_PAGE_APP_;
+
 	//noinspection JSUnresolvedVariable
 	Stripe.setPublishableKey(publishableKey);
-	var collectOccupationEnabled = (typeof _DonationPage_collectOccupationEnabled === 'undefined') ? true : _DonationPage_collectOccupationEnabled;
-	var collectOccupationThreshold = (typeof _DonationPage_collectOccupationThreshold === 'undefined') ? 100 : _DonationPage_collectOccupationThreshold;
-	var donationLimit = (typeof _DonationPage_donationLimit === 'undefined') ? -1 : _DonationPage_donationLimit;
-	var payDuesPage = (typeof _DonationPage_payDuesPage === 'undefined') ? false : _DonationPage_payDuesPage;
-	var pagePurpose = (typeof _DonationPage_pagePurpose === 'undefined') ? "donation" : _DonationPage_pagePurpose;
+	var collectOccupationEnabled = (typeof app.collectOccupationEnabled === 'undefined') ? true : app.collectOccupationEnabled;
+	var collectOccupationThreshold = (typeof app.collectOccupationThreshold === 'undefined') ? 100 : app.collectOccupationThreshold;
+	var donationLimit = (typeof app.donationLimit === 'undefined') ? -1 : app.donationLimit;
+	var payDuesPage = (typeof app.payDuesPage === 'undefined') ? false : app.payDuesPage;
+	var pagePurpose = (typeof app.pagePurpose === 'undefined') ? "donation" : app.pagePurpose;
 
 	var submittedAmount = 0;
 	var submittedAmountStr = "";
