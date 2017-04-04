@@ -22,6 +22,10 @@ public class LoggingController {
 	)
 	@ResponseBody
 	public void log(@RequestBody String logString, HttpServletRequest request) {
-		logger.info(logString);
+		String idPrefix = "";
+		if (request != null && request.getSession() != null) {
+			idPrefix = request.getSession().getId() + ": ";
+		}
+		logger.info(idPrefix + logString);
 	}
 }

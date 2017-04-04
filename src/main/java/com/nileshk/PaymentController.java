@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
@@ -152,11 +154,17 @@ public class PaymentController {
 
 	@RequestMapping(value = "/getConfig", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public ClientConfig getClientConfig() {
+	public ClientConfig getClientConfig(HttpServletRequest request) {
 		ClientConfig config = new ClientConfig();
 		config.setPublishableKey(publishableKey);
 		config.setOrganizationDisplayName(organizationDisplayName);
 		config.setApplyPayEnabled(applePayEnabled);
+		if (request != null && request.getSession(true) != null) {
+			HttpSession session = request.getSession(true);
+			if (session != null) {
+				logger.info("Session ID: " + session.getId());
+			}
+		}
 		return config;
 	}
 
