@@ -105,98 +105,21 @@ public class GoogleSheetsService implements PaymentPostProcessor {
 		contentToAppend.setMajorDimension("ROWS");
 		List<List<Object>> list = new ArrayList<>();
 		List<Object> e = new ArrayList<>();
-		String name = "";
-		String address1 = "";
-		String address2 = "";
-		String city = "";
-		String state = "";
-		String zip = "";
-		String country = "";
-		String email = "";
-		if (map.containsKey("applePayResult")) {
-			Map<String, Object> applePayResult = (Map<String, Object>) map.get("applePayResult");
-			if (applePayResult.containsKey("shippingContact")) {
-				Map<String, Object> shippingMap = (Map<String, Object>) applePayResult.get("shippingContact");
-				name = (shippingMap.getOrDefault("givenName", "") + " " + shippingMap.getOrDefault("familyName", "")).trim();
-				if (shippingMap.containsKey("addressLines")) {
-					Object addressLinesObj = shippingMap.get("addressLines");
-					if (addressLinesObj instanceof String[]) {
-						logger.info("Address is an array");
-						String[] addressLines = (String[]) addressLinesObj;
-						if (addressLines.length > 0) {
-							address1 = addressLines[0];
-						}
-						if (addressLines.length > 1) {
-							address2 = addressLines[1];
-						}
-					} else if (addressLinesObj instanceof List) {
-						logger.info("Address is a list");
-						List<String> addressLines = (List<String>) addressLinesObj;
-						if (addressLines.size() > 0) {
-							address1 = addressLines.get(0);
-						}
-						if (addressLines.size() > 1) {
-							address2 = addressLines.get(1);
-						}
-					}
-					city = (String) shippingMap.getOrDefault("locality", "");
-					state = (String) shippingMap.getOrDefault("administrativeArea", "");
-					zip = (String) shippingMap.getOrDefault("postalCode", "");
-					country = (String) shippingMap.getOrDefault("countryCode", "");
-					email = (String) shippingMap.getOrDefault("emailAddress", "");
-				}
-			}
-		}
-		Map<String, Object> token = (Map<String, Object>) map.get("token");
-		if (token != null) {
-			Map<String, Object> card = (Map<String, Object>) token.get("card");
-			if (card != null) {
-				if (isBlank(name)) {
-					name = (String) card.getOrDefault("name", "");
-				}
-				if (isBlank(address1)) {
-					address1 = (String) card.getOrDefault("address_line1", "");
-				}
-				if (isBlank(address2)) {
-					address2 = (String) card.getOrDefault("address_line2", "");
-				}
-				if (isBlank(city)) {
-					city = (String) card.getOrDefault("address_city", "");
-				}
-				if (isBlank(state)) {
-					state = (String) card.getOrDefault("address_state", "");
-				}
-				if (isBlank(zip)) {
-					zip = (String) card.getOrDefault("address_zip", "");
-				}
-				if (isBlank(country)) {
-					country = (String) card.getOrDefault("address_country", "");
-				}
-				if (isBlank(country)) {
-					country = (String) card.getOrDefault("country", "");
-				}
-				if (isBlank(email)) {
-					email = (String) card.getOrDefault("email", "");
-				}
-			}
-		}
 
-		if (isBlank(email)) {
-			email = (String) map.getOrDefault("description", "");
-		}
+		Donation donation = new Donation(map);
 
-		e.add(dateFormat.format(new Date()));
-		e.add(((Integer) map.getOrDefault("amount", 0)) / 100);
-		e.add(trimToEmpty(name));
-		e.add(trimToEmpty(address1));
-		e.add(trimToEmpty(address2));
-		e.add(trimToEmpty(city));
-		e.add(trimToEmpty(state));
-		e.add(trimToEmpty(zip));
-		e.add(trimToEmpty(country));
-		e.add(trimToEmpty((String) map.getOrDefault("occupation", "")));
-		e.add(trimToEmpty(email));
-		e.add(trimToEmpty((String) map.getOrDefault("pagePurpose", "unknown")));
+		e.add(dateFormat.format(donation.getPaymentDate()));
+		e.add(donation.getAmountCents() / 100);
+		e.add(trimToEmpty(donation.getName()));
+		e.add(trimToEmpty(donation.getAddress1()));
+		e.add(trimToEmpty(donation.getAddress2()));
+		e.add(trimToEmpty(donation.getCity()));
+		e.add(trimToEmpty(donation.getState()));
+		e.add(trimToEmpty(donation.getZip()));
+		e.add(trimToEmpty(donation.getCountry()));
+		e.add(trimToEmpty(donation.getOccupation()));
+		e.add(trimToEmpty(donation.getEmail()));
+		e.add(trimToEmpty(donation.getPurpose()));
 		list.add(e);
 		contentToAppend.setValues(list);
 		AppendValuesResponse appendValuesResponse = service.spreadsheets().values()
