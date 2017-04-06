@@ -33,7 +33,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
@@ -81,14 +80,14 @@ public class GoogleSheetsService implements PaymentPostProcessor {
 	}
 
 	@Async
-	public void postProcessPayment(Map<String, Object> map, Charge charge) {
+	public void postProcessPayment(Map<String, Object> map, Charge charge, Donation donation) {
 		logger.info("GoogleSheetsService.postProcessPayment");
 		if (isNotBlank(googleSheetId)) {
 			try {
 				Sheets service = getSheetsService();
 				String spreadsheetId = googleSheetId;
 				addLog(map, charge, service, spreadsheetId);
-				addTransaction(map, service, spreadsheetId);
+				addTransaction(donation, service, spreadsheetId);
 
 			} catch (IOException e) { // TODO More info on exception
 				logger.error("IOException adding to Google spreadsheet", e);
@@ -100,13 +99,11 @@ public class GoogleSheetsService implements PaymentPostProcessor {
 		}
 	}
 
-	private void addTransaction(Map<String, Object> map, Sheets service, String spreadsheetId) throws IOException {
+	private void addTransaction(Donation donation, Sheets service, String spreadsheetId) throws IOException {
 		ValueRange contentToAppend = new ValueRange();
 		contentToAppend.setMajorDimension("ROWS");
 		List<List<Object>> list = new ArrayList<>();
 		List<Object> e = new ArrayList<>();
-
-		Donation donation = new Donation(map);
 
 		e.add(dateFormat.format(donation.getPaymentDate()));
 		e.add(donation.getAmountCents() / 100);

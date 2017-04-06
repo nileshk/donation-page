@@ -5,9 +5,9 @@ import org.springframework.scheduling.annotation.Async;
 
 import java.util.Map;
 
-public interface PaymentPostProcessor {
+public interface Processors {
 
 	@Async
-	void postProcessPayment(Map<String, Object> map, Charge charge, Donation donation);
+	void postProcess(Map<String, Object> param, Charge charge);
 
 }

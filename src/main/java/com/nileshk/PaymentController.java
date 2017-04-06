@@ -25,7 +25,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -78,19 +77,17 @@ public class PaymentController {
 	@Value("${vcs.build.id}")
 	private String vcsBuildId;
 
-	final List<PaymentPostProcessor> paymentPostProcessors;
-	//PaymentPostProcessor paymentPostProcessor;
+	final private Processors processors;
 
 	@Autowired
 	public PaymentController(
 			@Value("${stripe.secretKey}") String secretKey,
 			@Value("${stripe.publishableKey}") String publishableKey,
-			/* PaymentPostProcessor paymentPostProcessor*/
-			List<PaymentPostProcessor> paymentPostProcessors) {
+			Processors processors
+			) {
 		Stripe.apiKey = secretKey;
 		this.publishableKey = publishableKey;
-		//this.paymePostProcessor = paymentPostProcessor;
-		this.paymentPostProcessors = paymentPostProcessors;
+		this.processors = processors;
 	}
 
 	@RequestMapping(value = "/", method = GET)
@@ -236,7 +233,7 @@ public class PaymentController {
 			logger.info("Charge Result:");
 			logger.info(chargeResult.toJson());
 			logger.info("-------------------------");
-			postProcess(param, chargeResult);
+			processors.postProcess(param, chargeResult);
 			logger.info("Post-processing initiated");
 			return new ChargeResult(chargeResult);
 		} catch (AuthenticationException e) {
@@ -257,20 +254,6 @@ public class PaymentController {
 		} catch (RuntimeException e) {
 			logger.error("RuntimeException", e);
 			return ChargeResult.error("Application error occurred, please contact admin:" + e.getMessage());
-		}
-	}
-
-	private void postProcess(Map<String, Object> param, Charge charge) {
-		try {
-			if (paymentPostProcessors != null) {
-				for (PaymentPostProcessor paymentPostProcessor : paymentPostProcessors) {
-					if (paymentPostProcessor != null) {
-						paymentPostProcessor.postProcessPayment(param, charge);
-					}
-				}
-			}
-		} catch (Exception e) {
-			logger.error("Failure iterating over payment post processors", e);
 		}
 	}
 
