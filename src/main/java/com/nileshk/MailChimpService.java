@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.Map;
 
+import static com.nileshk.PaymentContants.DONATION_PURPOSE;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
@@ -26,11 +27,16 @@ public class MailChimpService implements PaymentPostProcessor {
 	@Value("${mailchimp.listId}")
 	String listId;
 
+	@Value("${mailchimp.donationsOnly:true}")
+	Boolean donationsOnly;
+
 	// TODO Only add to list if donation?
 
 	@Override
 	public void postProcessPayment(Map<String, Object> map, Charge charge, Donation donation) {
-		if (isNotBlank(apiKey) && isNotBlank(listId)) {
+		if (isNotBlank(apiKey) && isNotBlank(listId)
+				&& (!donationsOnly || DONATION_PURPOSE.equals(donation.getPurpose()))) {
+
 			try (MailchimpClient client = new MailchimpClient(apiKey)) {
 				logger.debug("Saving email to MailChimp list: " + listId);
 				EditMemberMethod.CreateOrUpdate method = new EditMemberMethod.CreateOrUpdate(listId, donation.getEmail());

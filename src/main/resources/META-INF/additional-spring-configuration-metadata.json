@@ -56,6 +56,21 @@
       "description": "Google Sheet Id to write log to (populating this enables it)."
     },
     {
+      "name": "mailchimp.apiKey",
+      "type": "java.lang.String",
+      "description": "MailChimp API key. If this, and mailchimp.listId is set, e-mails will be stored to a MailChimp list."
+    },
+    {
+      "name": "mailchimp.listId",
+      "type": "java.lang.String",
+      "description": "MailChimp List ID. If this, and mailchimp.apiKey is set, e-mails will be stored to a MailChimp list."
+    },
+    {
+      "name": "mailchimp.donationsOnly",
+      "type": "java.lang.Boolean",
+      "description": "If true, only store to MailChimp for donations. Default is true."
+    },
+    {
       "name": "vcs.build.id",
       "type": "java.lang.String",
       "description": "Version control build id (populated during build, do not override this)."

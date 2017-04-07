@@ -108,7 +108,7 @@ public class PaymentController {
 		model.addAttribute(COLLECT_OCCUPATION_ENABLED_KEY, collectOccupationEnabled);
 		model.addAttribute("collectOccupationThreshold", collectOccupationThreshold);
 		model.addAttribute("donationLimit", donationLimit);
-		model.addAttribute("pagePurpose", "donation");
+		model.addAttribute("pagePurpose", PaymentContants.DONATION_PURPOSE);
 		model.addAttribute("pagePurposeText", "Contribute to");
 		if (isNotBlank(googleAnalyticsTrackingId)) {
 			model.addAttribute("googleAnalyticsTrackingId", googleAnalyticsTrackingId);
@@ -145,7 +145,7 @@ public class PaymentController {
 		model.addAttribute("allowSpecificAmount", false);
 		model.addAttribute("donateButtonsEnabled", false);
 		model.addAttribute("payDuesPage", true);
-		model.addAttribute("pagePurpose", "dues");
+		model.addAttribute("pagePurpose", PaymentContants.DUES_PURPOSE);
 		return "index";
 	}
 
