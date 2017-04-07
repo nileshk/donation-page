@@ -59,7 +59,7 @@ public class Donation implements Serializable {
 					city = (String) shippingMap.getOrDefault("locality", "");
 					state = (String) shippingMap.getOrDefault("administrativeArea", "");
 					zip = (String) shippingMap.getOrDefault("postalCode", "");
-					country = (String) shippingMap.getOrDefault("countryCode", "");
+					country = (String) shippingMap.getOrDefault("country", shippingMap.getOrDefault("countryCode", ""));
 					email = (String) shippingMap.getOrDefault("emailAddress", "");
 				}
 			}
