@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class Donation implements Serializable {
 
@@ -106,6 +107,36 @@ public class Donation implements Serializable {
 
 		occupation = (String) map.getOrDefault("occupation", "");
 		purpose = (String) map.getOrDefault("pagePurpose", "unknown");
+	}
+
+	public String firstName() {
+		if (isNotBlank(name)) {
+			String[] split = name.split("\\s+");
+			if (split != null && split.length > 0) {
+				return split[0];
+			}
+		}
+		return "";
+	}
+
+	public String lastName() {
+		if (isNotBlank(name)) {
+			String[] split = name.split("\\s+");
+			if (split != null && split.length > 0) {
+				return split[split.length - 1];
+			}
+		}
+		return "";
+	}
+
+	public String middleName() {
+		if (isNotBlank(name)) {
+			String[] split = name.split("\\s+");
+			if (split != null && split.length == 3) {
+				return split[1];
+			}
+		}
+		return "";
 	}
 
 	public Date getPaymentDate() {

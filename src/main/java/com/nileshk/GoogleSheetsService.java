@@ -36,6 +36,9 @@ import java.util.Map;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
+/**
+ * Writes transaction info to a Google Sheet
+ */
 @Service
 public class GoogleSheetsService implements PaymentPostProcessor {
 

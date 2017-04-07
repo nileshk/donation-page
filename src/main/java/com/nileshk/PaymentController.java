@@ -233,6 +233,7 @@ public class PaymentController {
 			logger.info("Charge Result:");
 			logger.info(chargeResult.toJson());
 			logger.info("-------------------------");
+			// TODO Do failed charges get to this point?
 			processors.postProcess(param, chargeResult);
 			logger.info("Post-processing initiated");
 			return new ChargeResult(chargeResult);
