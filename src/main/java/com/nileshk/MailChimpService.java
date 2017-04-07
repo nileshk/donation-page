@@ -21,10 +21,10 @@ public class MailChimpService implements PaymentPostProcessor {
 
 	private static final Logger logger = Logger.getLogger(MailChimpService.class);
 
-	@Value("${mailchimp.apiKey}")
+	@Value("${mailchimp.apiKey:}")
 	String apiKey;
 
-	@Value("${mailchimp.listId}")
+	@Value("${mailchimp.listId:}")
 	String listId;
 
 	@Value("${mailchimp.donationsOnly:true}")
