@@ -2,7 +2,13 @@
 
 This is a Java [Spring Boot](https://projects.spring.io/spring-boot/) app that provides a donation page. Currently uses Stripe for payment processing, using [Checkout](https://stripe.com/docs/checkout) for credit card processing and supporting [Apple Pay](https://stripe.com/apple-pay).
 
-On successful donation payment, this will redirect to a thank you page with a link to sign-up for e-mails.
+On successful donation payment, this will redirect to a thank you page with a link to the main web site (which can be configured).  Transaction history is stored in a sqlite database.
+
+Optionally:
+ 
+* Transaction history can be added to a Google Sheet
+* E-mails can be added to a MailChimp list
+* Google Analytics can be can configured
 
 See a live version of it here:
 
@@ -30,12 +36,15 @@ See a live version of it here:
   * **app.googleAnalyticsTrackingId** - Google Analytics Tracking Id (populating this enables Google Analytics).
   * **app.googleSheetId** - Google Sheet Id to write log to (populating this enables it). **WORK IN PROGRESS**
   * **app.clientLoggingEnabled** - Log client messages to server. Default is `true`.
+  * **mailchimp.apiKey** - MailChimp API key. If this, and mailchimp.listId is set, e-mails will be stored to a MailChimp list.
+  * **mailchimp.listId** - MailChimp List ID. If this, and mailchimp.apiKey is set, e-mails will be stored to a MailChimp list.
+  * **mailchimp.donationsOnly** - If true, only store to MailChimp for donations. Default is `true`.
+  * **mailchimp.allFields** - If true, store all available fields in MailChimp (ones that are not default to a MailChimp List). Default is `false`.  The MailChimp list must have the required tags for the additional fields, otherwise writing to the list will fail.
   
 * Using Java 8 or later, to run the application:
-  * java -jar stripe-payments.jar
+  * `java -jar stripe-payments.jar`
 * The properties listed above could also be supplied on the command line, for example:
-  * java -jar stripe-payments.jar --org.displayName=MyOrg --server.port=9600
-
+  * `java -jar stripe-payments.jar --org.displayName=MyOrg --server.port=9600`
 
 ## Notes ##
 
@@ -43,6 +52,27 @@ See a live version of it here:
 * For Apple Pay to work, you must configure it in Stripe and your web server must serve the provided file at `/.well-known/apple-developer-merchantid-domain-association`.  Currently that means you must, for example, put a reverse-proxy such as Nginx or Apache Web Server in front of these application, or build a WAR and deploy it to a full Tomcat instance.
 * Apple Pay for Web only works in Safari. Your visitors will need to know that it doesn't work in embedded browsers such as those built into Facebook and Twitter clients 
 * The `/fragment` page serves a version of the site without any JS and CSS files loaded.  This is for use, for example, for loading the HTML another application (e.g. Wordpress) _without_ using an `iframe`.  You will need to load all the JS and CSS files in your parent application's page, including `app.js` file, and resolve any style conflicts your parent application may have with Bootstrap CSS.   
+* Currently only handling United States currency (dollars).
+
+### MailChimp Tags ###
+
+* The MailChimp list should retain these default tags (and their tags )in any case:
+  * **FNAME** - `text`
+  * **LNAME** - `text`
+
+* These are the additional tags used if `emailchimp.allFields=true` with their types:
+  * **DATEPAID** - `email`
+  * **AMOUNTSTR** - `text`
+  * **AMOUNTCENT** - `number`
+  * **FULLNAME** - `text`
+  * **ADDRESS1** - `text`
+  * **ADDRESS2** - `text`
+  * **CITY** - `text`
+  * **STATE** - `text`
+  * **ZIP** - `zip code (US only)`
+  * **COUNTRY** - `text`
+  * **OCCUPATION** - `text`
+  * **PURPOSE** - `text`
 
 ## Testing ##
 Testing of multiple devices and browsers for this project is being done with:

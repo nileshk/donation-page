@@ -30,12 +30,13 @@ public class MailChimpService implements PaymentPostProcessor {
 	@Value("${mailchimp.donationsOnly:true}")
 	Boolean donationsOnly;
 
-	// TODO Only add to list if donation?
+	@Value("${mailchimp.allFields:false}")
+	Boolean allFields;
 
 	@Override
 	public void postProcessPayment(Map<String, Object> map, Charge charge, Donation donation) {
 		if (isNotBlank(apiKey) && isNotBlank(listId)
-				&& (!donationsOnly || DONATION_PURPOSE.equals(donation.getPurpose()))) {
+				&& (donationsOnly == null || !donationsOnly || DONATION_PURPOSE.equals(donation.getPurpose()))) {
 
 			try (MailchimpClient client = new MailchimpClient(apiKey)) {
 				logger.debug("Saving email to MailChimp list: " + listId);
@@ -44,7 +45,20 @@ public class MailChimpService implements PaymentPostProcessor {
 				method.merge_fields = new MailchimpObject();
 				method.merge_fields.mapping.put("FNAME", donation.firstName());
 				method.merge_fields.mapping.put("LNAME", donation.lastName());
-				// TODO Store more fields (optionally)
+				if (allFields != null && allFields) {
+					method.merge_fields.mapping.put("DATEPAID", donation.getPaymentDate());
+					method.merge_fields.mapping.put("AMOUNTSTR", donation.getAmountString());
+					method.merge_fields.mapping.put("AMOUNTCENT", donation.getAmountCents());
+					method.merge_fields.mapping.put("FULLNAME", donation.getName());
+					method.merge_fields.mapping.put("ADDRESS1", donation.getAddress1());
+					method.merge_fields.mapping.put("ADDRESS2", donation.getAddress2());
+					method.merge_fields.mapping.put("CITY", donation.getCity());
+					method.merge_fields.mapping.put("STATE", donation.getState());
+					method.merge_fields.mapping.put("ZIP", donation.getZip());
+					method.merge_fields.mapping.put("COUNTRY", donation.getCountry());
+					method.merge_fields.mapping.put("OCCUPATION", donation.getOccupation());
+					method.merge_fields.mapping.put("PURPOSE", donation.getPurpose());
+				}
 
 				MemberInfo member = client.execute(method);
 				logger.info("The user has been successfully subscribed: " + member);
@@ -52,6 +66,7 @@ public class MailChimpService implements PaymentPostProcessor {
 				logger.error("IOException from MailchimpClient", e);
 			} catch (MailchimpException e) {
 				logger.error("MailchimpException on MailchimpClient.execute", e);
+				// XXX Try with just default fields if allFields fails?
 			}
 		}
 	}

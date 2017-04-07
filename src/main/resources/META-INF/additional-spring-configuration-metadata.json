@@ -68,7 +68,12 @@
     {
       "name": "mailchimp.donationsOnly",
       "type": "java.lang.Boolean",
-      "description": "If true, only store to MailChimp for donations. Default is true."
+      "description": "If true, only store to MailChimp for donations. Default is `true`."
+    },
+    {
+      "name": "mailchimp.allFields",
+      "type": "java.lang.Boolean",
+      "description": "If true, store all available fields in MailChimp (ones that are not default to a MailChimp List). Default is `false`."
     },
     {
       "name": "vcs.build.id",
