@@ -61,7 +61,7 @@ See a live version of it here:
   * **LNAME** - `text`
 
 * These are the additional tags used if `emailchimp.allFields=true` with their types:
-  * **DATEPAID** - `email`
+  * **DATEPAID** - `date`
   * **AMOUNTSTR** - `text`
   * **AMOUNTCENT** - `number`
   * **FULLNAME** - `text`
