@@ -1,5 +1,15 @@
 package com.nileshk;
 
+import com.paypal.api.payments.Amount;
+import com.paypal.api.payments.Item;
+import com.paypal.api.payments.ItemList;
+import com.paypal.api.payments.Payer;
+import com.paypal.api.payments.Payment;
+import com.paypal.api.payments.PaymentExecution;
+import com.paypal.api.payments.RedirectUrls;
+import com.paypal.api.payments.Transaction;
+import com.paypal.base.rest.APIContext;
+import com.paypal.base.rest.PayPalRESTException;
 import com.stripe.Stripe;
 import com.stripe.exception.APIConnectionException;
 import com.stripe.exception.APIException;
@@ -7,6 +17,7 @@ import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
 import com.stripe.model.Charge;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +34,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static com.paypal.base.Constants.LIVE;
+import static com.paypal.base.Constants.SANDBOX;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -40,6 +55,24 @@ public class PaymentController {
 	private static final String COLLECT_OCCUPATION_ENABLED_KEY = "collectOccupationEnabled";
 
 	private String publishableKey;
+
+	@Value("${paypal.enabled:false}")
+	private Boolean paypalEnabled;
+
+	@Value("${paypal.sandbox:false}")
+	private Boolean paypalSandbox;
+
+	@Value("${paypal.sandboxClientId:}")
+	private String paypalSandboxClientId;
+
+	@Value("${paypal.sandboxSecret:}")
+	private String paypalSandboxSecret;
+
+	@Value("${paypal.clientId:}")
+	private String paypalClientId;
+
+	@Value("${paypal.secret:}")
+	private String paypalSecret;
 
 	@Value("${app.clientLoggingEnabled:true}")
 	private Boolean clientLoggingEnabled = true;
@@ -99,6 +132,10 @@ public class PaymentController {
 	private void defaultModel(Model model) {
 		// Use current time as vcs build id if in developement
 		model.addAttribute("vcsBuildId", (isBlank(vcsBuildId) || "@buildNumber@".equals(vcsBuildId)) ? String.valueOf(new Date().getTime()) : vcsBuildId);
+
+		model.addAttribute("stripePublishableKey", publishableKey);
+		model.addAttribute("paypalEnabled", paypalEnabled);
+		model.addAttribute("paypalSandbox", paypalSandbox);
 
 		model.addAttribute("clientLoggingEnabled", clientLoggingEnabled);
 		model.addAttribute("organizationDisplayName", organizationDisplayName);
@@ -257,6 +294,90 @@ public class PaymentController {
 			return ChargeResult.error("Application error occurred, please contact admin:" + e.getMessage());
 		}
 	}
+
+
+	@NotNull
+	private APIContext getPaypalContext() {
+		return paypalSandbox
+					? new APIContext(paypalSandboxClientId, paypalSandboxSecret, SANDBOX)
+					: new APIContext(paypalClientId, paypalSecret, LIVE);
+	}
+
+	@RequestMapping(value = "/paypalCreatePayment", method = POST,
+			// consumes = MediaType.APPLICATION_JSON_VALUE,
+			produces = MediaType.APPLICATION_JSON_VALUE
+	)
+	@ResponseBody
+	public PaypalCreatePaymentResponse paypalCreatePayment(@RequestParam("amount") String amount) {
+		logger.info("paypalCreatePayment (sandbox = " + paypalSandbox + ")");
+
+		APIContext context = getPaypalContext();
+		Payment payment = new Payment();
+		try {
+			payment.setIntent("sale");
+			// payment.setExperienceProfileId("");
+			// payment.setRedirectUrls();
+			payment.setPayer(new Payer().setPaymentMethod("paypal"));
+
+			List<Transaction> transactions = new ArrayList<>();
+			Transaction transaction = new Transaction();
+			transaction.setAmount(new Amount().setTotal(amount).setCurrency("USD"));
+			transaction.setDescription("Donation");
+			ItemList itemList = new ItemList();
+			List<Item> items = new ArrayList<>();
+			items.add(new Item()
+					.setQuantity("1")
+					.setName("Donation")
+					.setPrice(amount)
+					.setCurrency("USD")
+					.setDescription("Donation"));
+			itemList.setItems(items);
+			transaction.setItemList(itemList);
+			transactions.add(transaction);
+			payment.setTransactions(transactions);
+			payment.setRedirectUrls(new RedirectUrls()
+					.setCancelUrl("https://jessicavaughn.us/contribute/paypalCancel") // TODO
+					.setReturnUrl("https://jessicavaughn.us/contribute/")); // TODO
+			logger.info("Payment: " + payment.toJSON());
+			Payment response = payment.create(context);
+			logger.info("Paypal payment created:" + response.toJSON());
+
+			Map<String, Object> map = new HashMap<>();
+			map.put("payToken", response.getId());
+			//return "\"" + response.getId() + "\"";
+			//return map;
+			return new PaypalCreatePaymentResponse(response.getId());
+		} catch (PayPalRESTException e) {
+			logger.error("Failed to create PayPal Payment object", e);
+		}
+		return null;
+	}
+
+	@RequestMapping(value = "/paypalExecutePayment", method = POST,
+			produces = MediaType.APPLICATION_JSON_VALUE
+	)
+	@ResponseBody
+	public String paypalExecutePayment(
+			@RequestParam("payToken") String payToken,
+			@RequestParam("payerId") String payerId
+			) {
+		logger.info("payerToken: " + payToken);
+		logger.info("payerId: " + payerId);
+		APIContext context = getPaypalContext();
+		Payment payment = new Payment().setId(payToken);
+		PaymentExecution paymentExecution = new PaymentExecution();
+		paymentExecution.setPayerId(payerId);
+		try {
+			Payment createdPayment = payment.execute(context, paymentExecution);
+			logger.info(createdPayment.toJSON());
+			// TODO Store address, occupation, etc...
+			return createdPayment.toJSON();
+		} catch (PayPalRESTException e) {
+			logger.error("Error executing PayPal payment", e);
+			return "";
+		}
+	}
+
 
 	@RequestMapping(value = "/successfulPayment", method = GET)
 	public String successfulPayment(

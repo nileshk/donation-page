@@ -25,6 +25,8 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 	var pagePurpose = (typeof app.pagePurpose === 'undefined') ? "donation" : app.pagePurpose;
 	var clientLoggingEnabled = (typeof app.clientLoggingEnabled === 'undefined') ? true : app.clientLoggingEnabled;
 
+	var paypalEnabled = (typeof app.paypalEnabled === 'undefined') ? false : app.paypalEnabled;
+
 	var submittedAmount = 0;
 	var submittedAmountStr = "";
 	var applePayEnabled = false;
@@ -239,7 +241,7 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 			return;
 		}
 
-		if (!applePayEnabled) {
+		if (!applePayEnabled && !paypalEnabled) {
 			doCreditCardDonate();
 		} else {
 			$('#donationAmountAlert').text("Amount: $" + submittedAmountStr);
@@ -284,6 +286,45 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 				log("Apple Pay not available");
 			}
 		});
+	}
+
+	if (paypalEnabled) {
+		paypal.Button.render({
+			// Set your environment
+			env: app.paypalSandbox ? 'sandbox' : 'production',
+
+			style: {
+				label: 'checkout', // checkout || credit
+				size: 'medium',    // tiny | small | medium
+				shape: 'pill',     // pill | rect
+				color: 'blue'      // gold | blue | silver
+			},
+
+			payment: function() {
+				return paypal.request.post(_stripePaymentsBaseUrl + 'paypalCreatePayment', {amount: submittedAmountStr})
+					.then(function(res) {
+						return res.payToken;
+					});
+			},
+
+			onAuthorize: function(data, actions) {
+				return paypal.request.post(_stripePaymentsBaseUrl + 'paypalExecutePayment', {
+					payToken: data.paymentID,
+					payerId: data.payerID
+				}).then(function(data) {
+					log("Paypal execute successful, redirecting to success page.");
+					doSuccess(submittedAmount, data.payer.payer_info.email);
+					//document.querySelector('#paypal-button-container').innerText = 'Payment Complete!';
+				});
+				/*.error(function(jqXHR, textStatus, errorThrown) {
+				 if (console) {
+				 console.log(jqXHR);
+				 console.log(textStatus);
+				 console.log(errorThrown);
+				 }
+				 }); */
+			}
+		}, '#paypal-button-container');
 	}
 
 	log('Initialization complete');

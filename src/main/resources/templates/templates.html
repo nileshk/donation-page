@@ -10,6 +10,8 @@
 <!--/*@thymesVar id="allowSpecificAmount" type="java.lang.Boolean"*/--><!-- Default: true -->
 <!--/*@thymesVar id="donateButtonsEnabled" type="java.lang.Boolean"*/--><!-- Default: true -->
 <!--/*@thymesVar id="payDuesPage" type="java.lang.Boolean"*/--><!-- Default: false -->
+<!--/*@thymesVar id="applyPayEnabled" type="java.lang.Boolean"*/-->
+<!--/*@thymesVar id="paypalEnabled" type="java.lang.Boolean"*/-->
 <body>
 
 <span th:fragment="js">
@@ -24,6 +26,8 @@
 	_DONATION_PAGE_APP_.donationLimit = /*[[${donationLimit}]]*/ -1;
 	_DONATION_PAGE_APP_.payDuesPage = /*[[${payDuesPage}]]*/ false;
 	_DONATION_PAGE_APP_.pagePurpose = /*[[${pagePurpose}]]*/ "donation";
+	_DONATION_PAGE_APP_.paypalEnabled = /*[[${paypalEnabled}]]*/ false;
+	_DONATION_PAGE_APP_.paypalSandbox = /*[[${paypalSandbox}]]*/ false;
 
 	/*]]>*/
 	</script>
@@ -137,12 +141,18 @@
 					<h3 align="center">Choose payment method</h3>
 					<h4 align="center">(Apple Pay or Credit Card)</h4>
 					<br/>
-					<button id="apple-pay-button" class="apple-pay-button"></button>
-					<br/>
+					<div th:if="${applyPayEnabled}">
+						<button id="apple-pay-button" class="apple-pay-button"></button>
+						<br/>
+					</div>
 					<button id="credit-pay-button" type="button" class="credit-pay-button btn btn-default" aria-label="Center Align">
 						<span class="glyphicon glyphicon-credit-card" aria-hidden="true"></span>
 						Credit Card
 					</button>
+					<div th:if="${paypalEnabled}">
+						<br/>
+						<div id="paypal-button-container"></div>
+					</div>
 					<br/>
 					<button id="cancel-button" type="button" class="credit-pay-button btn btn-default" aria-label="Center Align">
 						<!--<span class="glyphicon" aria-hidden="true"></span>-->
