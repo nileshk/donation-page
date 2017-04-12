@@ -26,6 +26,16 @@
       "description": "PayPal API secret."
     },
     {
+      "name": "paypal.returnUrl",
+      "type": "java.lang.String",
+      "description": "PayPal API return URL."
+    },
+    {
+      "name": "paypal.cancelUrl",
+      "type": "java.lang.String",
+      "description": "PayPal API cancel URL."
+    },
+    {
       "name": "paypal.sandbox",
       "type": "java.lang.String",
       "description": "Set to `true` to use PayPal in sandbox mode (for testing). Default is `false`."

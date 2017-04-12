@@ -25,6 +25,8 @@ See a live version of it here:
   * **paypal.enabled** - Set to `true` to enable PayPal (defaults to `false`).
   * **paypal.clientId** - PayPal API client ID.
   * **paypal.secret** - PayPal API secret.
+  * **paypal.returnUrl** - PayPal API return URL.
+  * **paypal.cancelUrl** - PayPal API cancel URL.
   * **paypal.sandbox** - Set to `true` to use PayPal in sandbox mode (for testing). Default is `false`.
   * **paypal.sandboxClientId** - PayPal API Sandbox client ID.
   * **paypal.sandboxSecret** - PayPal API Sandbox secret.
@@ -57,7 +59,8 @@ See a live version of it here:
 
 * You can configure Stripe test keys and there will be a very obvious notice that you are in test mode in the web page.
 * For Apple Pay to work, you must configure it in Stripe and your web server must serve the provided file at `/.well-known/apple-developer-merchantid-domain-association`.  Currently that means you must, for example, put a reverse-proxy such as Nginx or Apache Web Server in front of these application, or build a WAR and deploy it to a full Tomcat instance.
-* Apple Pay for Web only works in Safari. Your visitors will need to know that it doesn't work in embedded browsers such as those built into Facebook and Twitter clients 
+* Apple Pay for Web only works in Safari. Your visitors will need to know that it doesn't work in embedded browsers such as those built into Facebook and Twitter clients
+* PayPal support requires a Business account and REST API credentials.
 * The `/fragment` page serves a version of the site without any JS and CSS files loaded.  This is for use, for example, for loading the HTML another application (e.g. Wordpress) _without_ using an `iframe`.  You will need to load all the JS and CSS files in your parent application's page, including `app.js` file, and resolve any style conflicts your parent application may have with Bootstrap CSS.   
 * Currently only handling United States currency (dollars).
 

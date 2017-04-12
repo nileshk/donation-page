@@ -74,6 +74,12 @@ public class PaymentController {
 	@Value("${paypal.secret:}")
 	private String paypalSecret;
 
+	@Value("${paypal.returnUrl:}")
+	private String paypalReturnUrl;
+
+	@Value("${paypal.cancelUrl:}")
+	private String paypalCancelUrl;
+
 	@Value("${app.clientLoggingEnabled:true}")
 	private Boolean clientLoggingEnabled = true;
 
@@ -336,8 +342,8 @@ public class PaymentController {
 			transactions.add(transaction);
 			payment.setTransactions(transactions);
 			payment.setRedirectUrls(new RedirectUrls()
-					.setCancelUrl("https://jessicavaughn.us/contribute/paypalCancel") // TODO
-					.setReturnUrl("https://jessicavaughn.us/contribute/")); // TODO
+					.setCancelUrl(paypalCancelUrl)
+					.setReturnUrl(paypalReturnUrl));
 			logger.info("Payment: " + payment.toJSON());
 			Payment response = payment.create(context);
 			logger.info("Paypal payment created:" + response.toJSON());
@@ -371,7 +377,6 @@ public class PaymentController {
 		try {
 			Payment createdPayment = payment.execute(context, paymentExecution);
 			logger.info(createdPayment.toJSON());
-			// TODO Store address, occupation, etc...
 			processors.afterPaypal(createdPayment, pagePurpose, occupation);
 			return createdPayment.toJSON();
 		} catch (PayPalRESTException e) {
