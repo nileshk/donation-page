@@ -23,17 +23,19 @@ public class DatabaseService implements PaymentPostProcessor {
 	@Override
 	@Async
 	public void postProcessPayment(Map<String, Object> map, Charge charge, Donation donation) {
-		writeToDatabase(donation);
+		addDonation(donation);
+		addPaymentLog(donation, charge.toJson(), map.toString(), "Stripe");
 	}
 
 	@Override
 	@Async
 	public void afterPaypalPayment(Payment payment, Donation donation) {
-		writeToDatabase(donation);
+		addDonation(donation);
+		addPaymentLog(donation, payment.toJSON(), "", "PayPal");
 	}
 
-	private void writeToDatabase(Donation donation) {
-		logger.debug("DatabaseService.postProcessPayment");
+	private void addDonation(Donation donation) {
+		logger.debug("DatabaseService.addDonation");
 		jdbc.update(
 				"INSERT INTO donations (payment_date, amount_cents, amount_string, name, address1, address2, city, state, zip, country, email, occupation, purpose) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
 				donation.getPaymentDate(),
@@ -51,5 +53,18 @@ public class DatabaseService implements PaymentPostProcessor {
 				donation.getPurpose());
 	}
 
-
+	private void addPaymentLog(Donation donation, String jsonResponse, String parameters, String paymentProcessor) {
+		logger.debug("DatabaseService.addPaymentLog");
+		jdbc.update(
+				"INSERT INTO payment_log (payment_date, json_response, parameters, amount_string, email, occupation, purpose, payment_processor) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+				donation.getPaymentDate(),
+				jsonResponse,
+				parameters,
+				donation.getAmountString(),
+				donation.getEmail(),
+				donation.getOccupation(),
+				donation.getPurpose(),
+				paymentProcessor
+		);
+	}
 }
