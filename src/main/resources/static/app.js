@@ -283,9 +283,12 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 				log("Apple Pay enabled");
 				//document.getElementById('apple-pay-button').style.display = 'block';
 			} else {
+				$('.apple-pay-container').hide();
 				log("Apple Pay not available");
 			}
 		});
+	} else {
+		$('.apple-pay-container').hide();
 	}
 
 	if (paypalEnabled) {
