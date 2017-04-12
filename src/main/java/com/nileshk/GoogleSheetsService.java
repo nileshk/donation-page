@@ -105,7 +105,7 @@ public class GoogleSheetsService implements PaymentPostProcessor {
 				if (map != null && charge != null) {
 					addLog(map, charge, service, spreadsheetId);
 				} else if (payment != null) {
-					// TODO Log Paypal
+					addPayPalLog(payment, donation, service, spreadsheetId);
 				}
 				addTransaction(donation, service, spreadsheetId);
 
@@ -165,6 +165,27 @@ public class GoogleSheetsService implements PaymentPostProcessor {
 		contentToAppend.setValues(list);
 		AppendValuesResponse appendValuesResponse = service.spreadsheets().values()
 				.append(spreadsheetId, "Log!A:J", contentToAppend)
+				.setValueInputOption("RAW")
+				.execute();
+		logger.info(appendValuesResponse.toPrettyString());
+	}
+
+
+	private void addPayPalLog(Payment payment, Donation donation, Sheets service, String spreadsheetId) throws IOException {
+		ValueRange contentToAppend = new ValueRange();
+		contentToAppend.setMajorDimension("ROWS");
+		List<List<Object>> list = new ArrayList<>();
+		List<Object> e = new ArrayList<>();
+		e.add(trimToEmpty(dateFormat.format(donation.getPaymentDate())));
+		e.add(trimToEmpty(payment.toJSON()));
+		e.add(trimToEmpty(donation.getAmountString()));
+		e.add(trimToEmpty(donation.getEmail()));
+		e.add(trimToEmpty(donation.getOccupation()));
+		e.add(trimToEmpty(donation.getPurpose()));
+		list.add(e);
+		contentToAppend.setValues(list);
+		AppendValuesResponse appendValuesResponse = service.spreadsheets().values()
+				.append(spreadsheetId, "PayPal!A:F", contentToAppend)
 				.setValueInputOption("RAW")
 				.execute();
 		logger.info(appendValuesResponse.toPrettyString());
