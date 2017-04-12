@@ -21,6 +21,13 @@ See a live version of it here:
 * In "config" folder relative to the JAR, create "application.properties" file with these properties:
   * **stripe.secretKey** - Stripe's secret key
   * **stripe.publishableKey** - Stripe's publishable key
+* To enable PayPal, use these properties:
+  * **paypal.enabled** - Set to `true` to enable PayPal (defaults to `false`).
+  * **paypal.clientId** - PayPal API client ID.
+  * **paypal.secret** - PayPal API secret.
+  * **paypal.sandbox** - Set to `true` to use PayPal in sandbox mode (for testing). Default is `false`.
+  * **paypal.sandboxClientId** - PayPal API Sandbox client ID.
+  * **paypal.sandboxSecret** - PayPal API Sandbox secret.
 * These properties are optional but recommended:
   * **server.contextPath**  - path application will be at, e.g. `/contribute`
   * **server.port**  - port embedded Tomcat instance will run on

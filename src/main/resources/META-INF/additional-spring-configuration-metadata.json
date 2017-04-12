@@ -11,6 +11,36 @@
       "description": "Stripe Publishable Key."
     },
     {
+      "name": "paypal.enabled",
+      "type": "java.lang.String",
+      "description": "Set to `true` to enable PayPal (defaults to `false`)."
+    },
+    {
+      "name": "paypal.clientId",
+      "type": "java.lang.String",
+      "description": "PayPal API client ID."
+    },
+    {
+      "name": "paypal.secret",
+      "type": "java.lang.String",
+      "description": "PayPal API secret."
+    },
+    {
+      "name": "paypal.sandbox",
+      "type": "java.lang.String",
+      "description": "Set to `true` to use PayPal in sandbox mode (for testing). Default is `false`."
+    },
+    {
+      "name": "paypal.sandboxClientId",
+      "type": "java.lang.String",
+      "description": "PayPal API Sandbox client ID."
+    },
+    {
+      "name": "paypal.sandboxSecret",
+      "type": "java.lang.String",
+      "description": "PayPal API Sandbox secret."
+    },
+    {
       "name": "org.displayName",
       "type": "java.lang.String",
       "description": "Name that is displayed in Stripe Checkout and Apple Pay. You may want to keep this brief as there is not a lot of room in these dialogs.  Defaults to blank."
