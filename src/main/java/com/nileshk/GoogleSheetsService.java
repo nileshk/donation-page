@@ -16,6 +16,7 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.*;
 import com.google.api.services.sheets.v4.Sheets;
+import com.paypal.api.payments.Payment;
 import com.stripe.model.Charge;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -82,14 +83,30 @@ public class GoogleSheetsService implements PaymentPostProcessor {
 		}
 	}
 
+	@Override
 	@Async
 	public void postProcessPayment(Map<String, Object> map, Charge charge, Donation donation) {
 		logger.info("GoogleSheetsService.postProcessPayment");
+		afterPayment(map, charge, null, donation);
+	}
+
+	@Override
+	@Async
+	public void afterPaypalPayment(Payment payment, Donation donation) {
+		afterPayment(null, null, payment, donation);
+	}
+
+	public void afterPayment(Map<String, Object> map, Charge charge, Payment payment, Donation donation) {
+		logger.info("GoogleSheetsService.afterPayment");
 		if (isNotBlank(googleSheetId)) {
 			try {
 				Sheets service = getSheetsService();
 				String spreadsheetId = googleSheetId;
-				addLog(map, charge, service, spreadsheetId);
+				if (map != null && charge != null) {
+					addLog(map, charge, service, spreadsheetId);
+				} else if (payment != null) {
+					// TODO Log Paypal
+				}
 				addTransaction(donation, service, spreadsheetId);
 
 			} catch (IOException e) { // TODO More info on exception

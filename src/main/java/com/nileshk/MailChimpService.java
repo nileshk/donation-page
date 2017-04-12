@@ -5,9 +5,11 @@ import com.ecwid.maleorang.MailchimpException;
 import com.ecwid.maleorang.MailchimpObject;
 import com.ecwid.maleorang.method.v3_0.lists.members.EditMemberMethod;
 import com.ecwid.maleorang.method.v3_0.lists.members.MemberInfo;
+import com.paypal.api.payments.Payment;
 import com.stripe.model.Charge;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -34,7 +36,18 @@ public class MailChimpService implements PaymentPostProcessor {
 	Boolean allFields;
 
 	@Override
+	@Async
 	public void postProcessPayment(Map<String, Object> map, Charge charge, Donation donation) {
+		saveToList(donation);
+	}
+
+	@Override
+	@Async
+	public void afterPaypalPayment(Payment payment, Donation donation) {
+		saveToList(donation);
+	}
+
+	private void saveToList(Donation donation) {
 		if (isNotBlank(apiKey) && isNotBlank(listId)
 				&& (donationsOnly == null || !donationsOnly || DONATION_PURPOSE.equals(donation.getPurpose()))) {
 
@@ -70,4 +83,5 @@ public class MailChimpService implements PaymentPostProcessor {
 			}
 		}
 	}
+
 }

@@ -342,10 +342,6 @@ public class PaymentController {
 			Payment response = payment.create(context);
 			logger.info("Paypal payment created:" + response.toJSON());
 
-			Map<String, Object> map = new HashMap<>();
-			map.put("payToken", response.getId());
-			//return "\"" + response.getId() + "\"";
-			//return map;
 			return new PaypalCreatePaymentResponse(response.getId());
 		} catch (PayPalRESTException e) {
 			logger.error("Failed to create PayPal Payment object", e);
@@ -359,10 +355,15 @@ public class PaymentController {
 	@ResponseBody
 	public String paypalExecutePayment(
 			@RequestParam("payToken") String payToken,
-			@RequestParam("payerId") String payerId
+			@RequestParam("payerId") String payerId,
+			@RequestParam("pagePurpose") String pagePurpose,
+			@RequestParam("occupation") String occupation
 			) {
 		logger.info("payerToken: " + payToken);
 		logger.info("payerId: " + payerId);
+		logger.info("pagePurpose: " + pagePurpose);
+		logger.info("occupation: " + occupation);
+
 		APIContext context = getPaypalContext();
 		Payment payment = new Payment().setId(payToken);
 		PaymentExecution paymentExecution = new PaymentExecution();
@@ -371,6 +372,7 @@ public class PaymentController {
 			Payment createdPayment = payment.execute(context, paymentExecution);
 			logger.info(createdPayment.toJSON());
 			// TODO Store address, occupation, etc...
+			processors.afterPaypal(createdPayment, pagePurpose, occupation);
 			return createdPayment.toJSON();
 		} catch (PayPalRESTException e) {
 			logger.error("Error executing PayPal payment", e);

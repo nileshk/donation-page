@@ -310,7 +310,9 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 			onAuthorize: function(data, actions) {
 				return paypal.request.post(_stripePaymentsBaseUrl + 'paypalExecutePayment', {
 					payToken: data.paymentID,
-					payerId: data.payerID
+					payerId: data.payerID,
+					occupation: occupation,
+					pagePurpose: pagePurpose
 				}).then(function(data) {
 					log("Paypal execute successful, redirecting to success page.");
 					doSuccess(submittedAmount, data.payer.payer_info.email);

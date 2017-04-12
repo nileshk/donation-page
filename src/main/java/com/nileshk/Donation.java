@@ -1,5 +1,10 @@
 package com.nileshk;
 
+import com.paypal.api.payments.PayerInfo;
+import com.paypal.api.payments.Payment;
+import com.paypal.api.payments.ShippingAddress;
+import com.paypal.api.payments.Transaction;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +21,8 @@ public class Donation implements Serializable {
 	private Integer amountCents;
 	private String amountString;
 	private String name;
+	private String firstName;
+	private String lastName;
 	private String address1;
 	private String address2;
 	private String city;
@@ -109,7 +116,31 @@ public class Donation implements Serializable {
 		purpose = (String) map.getOrDefault("pagePurpose", "unknown");
 	}
 
+	public Donation(Payment payment, String purpose, String occupation) {
+		paymentDate = new Date();
+		Transaction transaction = payment.getTransactions().get(0);
+		amountString = "$" + transaction.getAmount().getTotal();
+		amountCents = Double.valueOf(Double.valueOf(transaction.getAmount().getTotal()) * 100).intValue();
+		PayerInfo payerInfo = payment.getPayer().getPayerInfo();
+		name = payerInfo.getFirstName() + " " + payerInfo.getLastName();
+		firstName = payerInfo.getFirstName();
+		lastName = payerInfo.getLastName();
+		ShippingAddress shippingAddress = transaction.getItemList().getShippingAddress();
+		address1 = shippingAddress.getLine1();
+		address2 = shippingAddress.getLine2();
+		city = shippingAddress.getCity();
+		state = shippingAddress.getState();
+		zip = shippingAddress.getPostalCode();
+		country = shippingAddress.getCountryCode();
+		email = payerInfo.getEmail();
+		this.occupation = occupation;
+		this.purpose = purpose;
+	}
+
 	public String firstName() {
+		if (isNotBlank(firstName)) {
+			return firstName;
+		}
 		if (isNotBlank(name)) {
 			String[] split = name.split("\\s+");
 			if (split != null && split.length > 0) {
@@ -120,6 +151,9 @@ public class Donation implements Serializable {
 	}
 
 	public String lastName() {
+		if (isNotBlank(lastName)) {
+			return lastName;
+		}
 		if (isNotBlank(name)) {
 			String[] split = name.split("\\s+");
 			if (split != null && split.length > 0) {
@@ -177,6 +211,22 @@ public class Donation implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getFirstName() {
+		return firstName();
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName();
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public String getAddress1() {
