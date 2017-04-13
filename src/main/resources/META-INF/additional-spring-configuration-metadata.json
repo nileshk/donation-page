@@ -56,6 +56,16 @@
       "description": "Name that is displayed in Stripe Checkout and Apple Pay. You may want to keep this brief as there is not a lot of room in these dialogs.  Defaults to blank."
     },
     {
+      "name": "app.url",
+      "type": "java.lang.String",
+      "description": "Canonical URL for donation page.  Used in og:url meta tag."
+    },
+    {
+      "name": "app.previewImageUrl",
+      "type": "java.lang.String",
+      "description": "URL to image used for previews (used in og:image meta tag)."
+    },
+    {
       "name": "url.mainPage",
       "type": "java.lang.String",
       "description": "URL for main page of web site (text with `org.siteTitle` links to this). Default is `/`."

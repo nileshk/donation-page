@@ -33,6 +33,8 @@ See a live version of it here:
 * These properties are optional but recommended:
   * **server.contextPath**  - path application will be at, e.g. `/contribute`
   * **server.port**  - port embedded Tomcat instance will run on
+  * **app.url** - Canonical URL for donation page.  Used in og:url meta tag.
+  * **app.previewImageUrl** - URL to image used for previews (used in og:image meta tag).
   * **org.displayName**  - Name that is displayed in Stripe Checkout and Apple Pay. You may want to keep this brief as there is not a lot of room in these dialogs.  Defaults to blank.
   * **org.siteTitle**  - Title of web site.  This can be a longer, more complete name.  Defaults to value specified by `org.displayName` if not provided   
 * These properties are optional:

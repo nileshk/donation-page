@@ -53,6 +53,7 @@ public class PaymentController {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	private static final String COLLECT_OCCUPATION_ENABLED_KEY = "collectOccupationEnabled";
+	private static final String OG_URL_KEY = "ogUrl";
 
 	private String publishableKey;
 
@@ -82,6 +83,12 @@ public class PaymentController {
 
 	@Value("${app.clientLoggingEnabled:true}")
 	private Boolean clientLoggingEnabled = true;
+
+	@Value("${app.url:}")
+	private String appUrl = "";
+
+	@Value("${app.previewImageUrl:}")
+	private String appPreviewImageUrl = "";
 
 	@Value("${org.displayName:}")
 	private String organizationDisplayName = "";
@@ -145,6 +152,12 @@ public class PaymentController {
 
 		model.addAttribute("clientLoggingEnabled", clientLoggingEnabled);
 		model.addAttribute("organizationDisplayName", organizationDisplayName);
+		if (isNotBlank(appUrl)) {
+			model.addAttribute(OG_URL_KEY, appUrl);
+		}
+		if (isNotBlank(appPreviewImageUrl)) {
+			model.addAttribute("ogImageUrl", appPreviewImageUrl);
+		}
 		model.addAttribute("mainPageUrl", mainPageUrl);
 		String displaySiteTitle = isNotBlank(siteTitle) ? siteTitle : organizationDisplayName;
 		model.addAttribute("siteTitle", displaySiteTitle);
@@ -189,6 +202,9 @@ public class PaymentController {
 		model.addAttribute("donateButtonsEnabled", false);
 		model.addAttribute("payDuesPage", true);
 		model.addAttribute("pagePurpose", PaymentContants.DUES_PURPOSE);
+		if (isNotBlank(appUrl)) {
+			model.addAttribute(OG_URL_KEY, appUrl + "dues");
+		}
 		return "index";
 	}
 
