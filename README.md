@@ -51,7 +51,12 @@ See a live version of it here:
   * **mailchimp.listId** - MailChimp List ID. If this, and mailchimp.apiKey is set, e-mails will be stored to a MailChimp list.
   * **mailchimp.donationsOnly** - If true, only store to MailChimp for donations. Default is `true`.
   * **mailchimp.allFields** - If true, store all available fields in MailChimp (ones that are not default to a MailChimp List). Default is `false`.  The MailChimp list must have the required tags for the additional fields, otherwise writing to the list will fail.
-  
+  * **app.emailNotificationRecipients** - Comma separated list of email address to send notifications to.
+* To use Mailgun for email notifications set **app.emailNotificationRecipients** and all of the following settings:
+  * **mailgun.domain** - Email domain configured in Mailgun.
+  * **mailgun.apiKey** - Mailgun API key.
+  * **mailgun.fromName** - Mailgun e-mail sender name.
+  * **mailgun.fromEmail** - Mailgun e-mail sender address.
 * Using Java 8 or later, to run the application:
   * `java -jar stripe-payments.jar`
 * The properties listed above could also be supplied on the command line, for example:

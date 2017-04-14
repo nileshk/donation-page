@@ -56,6 +56,11 @@
       "description": "Name that is displayed in Stripe Checkout and Apple Pay. You may want to keep this brief as there is not a lot of room in these dialogs.  Defaults to blank."
     },
     {
+      "name": "org.siteTitle",
+      "type": "java.lang.String",
+      "description": "Title of web site.  This can be a longer, more complete name.  Defaults to value specified by `org.displayName` if not provided."
+    },
+    {
       "name": "app.url",
       "type": "java.lang.String",
       "description": "Canonical URL for donation page.  Used in og:url meta tag."
@@ -124,6 +129,31 @@
       "name": "mailchimp.allFields",
       "type": "java.lang.Boolean",
       "description": "If true, store all available fields in MailChimp (ones that are not default to a MailChimp List). Default is `false`."
+    },
+    {
+      "name": "app.emailNotificationRecipients",
+      "type": "java.lang.Boolean",
+      "description": "Comma separated list of email address to send notifications to."
+    },
+    {
+      "name": "mailgun.domain",
+      "type": "java.lang.Boolean",
+      "description": "Email domain configured in Mailgun."
+    },
+    {
+      "name": "mailgun.apiKey",
+      "type": "java.lang.Boolean",
+      "description": "Mailgun API key"
+    },
+    {
+      "name": "mailgun.fromName",
+      "type": "java.lang.Boolean",
+      "description": "Mailgun e-mail sender name."
+    },
+    {
+      "name": "mailgun.fromEmail",
+      "type": "java.lang.Boolean",
+      "description": "Mailgun e-mail sender address"
     },
     {
       "name": "vcs.build.id",
