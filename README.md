@@ -1,14 +1,22 @@
 # Donation Page #
 
-This is a Java [Spring Boot](https://projects.spring.io/spring-boot/) app that provides a donation page. Currently uses Stripe for payment processing, using [Checkout](https://stripe.com/docs/checkout) for credit card processing and supporting [Apple Pay](https://stripe.com/apple-pay).
+This is a Java [Spring Boot](https://projects.spring.io/spring-boot/) app that provides a donation page. Integrates with Stripe and PayPal for payment processing.
+
+#### Specifics on payment services integration: ####
+* [Stripe Checkout](https://stripe.com/docs/checkout) is used for credit card payments
+* [Stripe](https://stripe.com/) is also used for [Apple Pay on the Web](https://stripe.com/apple-pay)
+* PayPal is available via [PayPal Express Checkout](https://developer.paypal.com/docs/classic/products/express-checkout/) integration
+
+**TODO** Allow PayPal alone without Stripe (currently Stripe Checkout is required, but PayPal is optional)
 
 On successful donation payment, this will redirect to a thank you page with a link to the main web site (which can be configured).  Transaction history is stored in a sqlite database.
 
-Optionally:
+#### Optional integrations: ####
  
-* Transaction history can be added to a Google Sheet
-* E-mails can be added to a MailChimp list
-* Google Analytics can be can configured
+* [Google Sheets](https://www.google.com/sheets/about/) for transaction history 
+* [MailChimp](https://mailchimp.com/) - e-mails addresses can be added to a MailChimp list
+* [Google Analytics](https://analytics.google.com/) can be can configured
+* [Mailgun](https://www.mailgun.com/) for notification e-mails (for donation recipient) sent to one or more addresses 
 
 See a live version of it here:
 
@@ -73,7 +81,7 @@ See a live version of it here:
 
 ### MailChimp Tags ###
 
-* The MailChimp list should retain these default tags (and their tags )in any case:
+* The MailChimp list should retain these default tags (and their tags) in any case:
   * **FNAME** - `text`
   * **LNAME** - `text`
 
