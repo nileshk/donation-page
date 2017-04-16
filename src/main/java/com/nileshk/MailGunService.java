@@ -63,7 +63,7 @@ public class MailGunService implements PaymentPostProcessor {
 	private void sendMail(Donation donation, String paymentType, String id) {
 		if (configuration != null) {
 			logger.info("Sending notification e-mails");
-			String subject = "Donation: " + donation.getAmountString() + " from " + donation.getName() + " to " + siteTitle();
+			String subject = String.format("Donation: %s from %s to %s", donation.getAmountString(), donation.getName(), siteTitle());
 			MailBuilder builder = Mail.using(configuration)
 					.body()
 					.h2("Donation Received")

@@ -132,28 +132,33 @@
     },
     {
       "name": "app.emailNotificationRecipients",
-      "type": "java.lang.Boolean",
-      "description": "Comma separated list of email address to send notifications to."
+      "type": "java.lang.String",
+      "description": "Comma-separated list of email address to send notifications to."
     },
     {
       "name": "mailgun.domain",
-      "type": "java.lang.Boolean",
+      "type": "java.lang.String",
       "description": "Email domain configured in Mailgun."
     },
     {
       "name": "mailgun.apiKey",
-      "type": "java.lang.Boolean",
+      "type": "java.lang.String",
       "description": "Mailgun API key"
     },
     {
       "name": "mailgun.fromName",
-      "type": "java.lang.Boolean",
+      "type": "java.lang.String",
       "description": "Mailgun e-mail sender name."
     },
     {
       "name": "mailgun.fromEmail",
-      "type": "java.lang.Boolean",
+      "type": "java.lang.String",
       "description": "Mailgun e-mail sender address"
+    },
+    {
+      "name": "pushbullet.apiTokens",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of PushBullet API tokens."
     },
     {
       "name": "vcs.build.id",

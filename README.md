@@ -17,6 +17,7 @@ On successful donation payment, this will redirect to a thank you page with a li
 * [MailChimp](https://mailchimp.com/) - e-mails addresses can be added to a MailChimp list
 * [Google Analytics](https://analytics.google.com/) can be can configured
 * [Mailgun](https://www.mailgun.com/) for notification e-mails (for donation recipient) sent to one or more addresses 
+* [PushBullet](https://www.pushbullet.com/) for push notifications
 
 See a live version of it here:
 
@@ -65,6 +66,7 @@ See a live version of it here:
   * **mailgun.apiKey** - Mailgun API key.
   * **mailgun.fromName** - Mailgun e-mail sender name.
   * **mailgun.fromEmail** - Mailgun e-mail sender address.
+  * **pushbullet.apiTokens** - Comma-separated list of PushBullet API tokens.
 * Using Java 8 or later, to run the application:
   * `java -jar stripe-payments.jar`
 * The properties listed above could also be supplied on the command line, for example:
