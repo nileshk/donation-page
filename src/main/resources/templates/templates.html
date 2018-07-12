@@ -10,6 +10,8 @@
 <!--/*@thymesVar id="allowSpecificAmount" type="java.lang.Boolean"*/--><!-- Default: true -->
 <!--/*@thymesVar id="donateButtonsEnabled" type="java.lang.Boolean"*/--><!-- Default: true -->
 <!--/*@thymesVar id="payDuesPage" type="java.lang.Boolean"*/--><!-- Default: false -->
+<!--/*@thymesVar id="genericPayPage" type="java.lang.Boolean"*/--><!-- Default: false -->
+<!--/*@thymesVar id="payAmount" type="java.lang.Integer"*/--><!-- Default: 25 -->
 <!--/*@thymesVar id="applyPayEnabled" type="java.lang.Boolean"*/-->
 <!--/*@thymesVar id="paypalEnabled" type="java.lang.Boolean"*/-->
 <body>
@@ -25,9 +27,11 @@
 	_DONATION_PAGE_APP_.collectOccupationThreshold = /*[[${collectOccupationThreshold}]]*/ 100;
 	_DONATION_PAGE_APP_.donationLimit = /*[[${donationLimit}]]*/ -1;
 	_DONATION_PAGE_APP_.payDuesPage = /*[[${payDuesPage}]]*/ false;
+	_DONATION_PAGE_APP_.genericPayPage = /*[[${payDuesPage}]]*/ false;
 	_DONATION_PAGE_APP_.pagePurpose = /*[[${pagePurpose}]]*/ "donation";
 	_DONATION_PAGE_APP_.paypalEnabled = /*[[${paypalEnabled}]]*/ false;
 	_DONATION_PAGE_APP_.paypalSandbox = /*[[${paypalSandbox}]]*/ false;
+	_DONATION_PAGE_APP_.payAmount = /*[[${payAmount}]]*/ 25;
 
 	/*]]>*/
 	</script>
@@ -74,6 +78,12 @@
 			<h5>Press button to pay dues:</h5>
 			<div class="row express-button-row">
 				<button id="payDuesButton" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(2700, '27');">$27</button>
+			</div>
+		</div>
+		<div th:if="${genericPayPage != null and genericPayPage}">
+			<h5>Press button to pay:</h5>
+			<div class="row express-button-row">
+				<button id="gneericPayButton" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(2500, '25');">$25</button>
 			</div>
 		</div>
 		<div th:if="${allowSpecificAmount == null || allowSpecificAmount}">

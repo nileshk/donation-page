@@ -35,6 +35,9 @@ public class Donation implements Serializable {
 
 	private Map<String, Object> map;
 
+	public Donation() {
+	}
+
 	public Donation(Map<String, Object> map) {
 		this.map = map;
 		paymentDate = new Date();

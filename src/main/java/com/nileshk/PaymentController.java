@@ -208,6 +208,26 @@ public class PaymentController {
 		return "index";
 	}
 
+	/**
+	 * Generic Pay page
+	 * @param model
+	 * @return page for paying specific amount
+	 */
+	@RequestMapping(value = "/pay", method = GET)
+	public String pay(Model model) {
+		defaultModel(model);
+		model.addAttribute(COLLECT_OCCUPATION_ENABLED_KEY, false); // Don't collect occupation for generic pay
+		model.addAttribute("pagePurposeText", "Pay");
+		model.addAttribute("allowSpecificAmount", false);
+		model.addAttribute("donateButtonsEnabled", false);
+		model.addAttribute("genericPayPage", true);
+		model.addAttribute("pagePurpose", PaymentContants.PAY_PURPOSE);
+		if (isNotBlank(appUrl)) {
+			model.addAttribute(OG_URL_KEY, appUrl + "pay");
+		}
+		return "index";
+	}
+
 	@RequestMapping(value = "/getConfig", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public ClientConfig getClientConfig(HttpServletRequest request) {
