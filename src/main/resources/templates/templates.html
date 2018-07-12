@@ -83,7 +83,12 @@
 		<div th:if="${genericPayPage != null and genericPayPage}">
 			<h5>Press button to pay:</h5>
 			<div class="row express-button-row">
-				<button id="gneericPayButton" class="col-sm-1 btn btn-primary express-button" onclick="_DonationPage_handleDonate(2500, '25');">$25</button>
+				<button id="genericPayButton_1" class="col-sm-1 btn btn-primary generic-pay-button" onclick="_DonationPage_handleDonate(2500, '25');">1 ticket - $25</button>
+				<button id="genericPayButton_2" class="col-sm-1 btn btn-primary generic-pay-button" onclick="_DonationPage_handleDonate(5000, '50');">2 tickets - $50</button>
+			</div>
+			<div class="row express-button-row">
+				<button id="genericPayButton_3" class="col-sm-1 btn btn-primary generic-pay-button" onclick="_DonationPage_handleDonate(7500, '75');">3 tickets - $75</button>
+				<button id="genericPayButton_4" class="col-sm-1 btn btn-primary generic-pay-button" onclick="_DonationPage_handleDonate(10000, '100');">4 tickets - $100</button>
 			</div>
 		</div>
 		<div th:if="${allowSpecificAmount == null || allowSpecificAmount}">
