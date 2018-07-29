@@ -6,7 +6,8 @@ import net.sargue.mailgun.Configuration;
 import net.sargue.mailgun.Mail;
 import net.sargue.mailgun.MailBuilder;
 import net.sargue.mailgun.Response;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 @Service
 public class MailGunService implements PaymentPostProcessor {
 
-	private static final Logger logger = Logger.getLogger(MailGunService.class);
+	private static final Logger logger = LogManager.getLogger(MailGunService.class);
 
 	private Configuration configuration;
 	private String siteTitle;

@@ -2,7 +2,8 @@ package com.nileshk;
 
 import com.paypal.api.payments.Payment;
 import com.stripe.model.Charge;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -15,7 +16,7 @@ import java.util.Map;
 @Transactional
 public class DatabaseService implements PaymentPostProcessor {
 
-	private static final Logger logger = Logger.getLogger(DatabaseService.class);
+	private static final Logger logger = LogManager.getLogger(DatabaseService.class);
 
 	@Autowired
 	JdbcTemplate jdbc;

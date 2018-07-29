@@ -1,6 +1,7 @@
 package com.nileshk;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +15,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @Controller
 public class LoggingController {
 
-	private static final Logger logger = Logger.getLogger(LoggingController.class);
+	private static final Logger logger = LogManager.getLogger(LoggingController.class);
 
 	@RequestMapping(value = "/log", method = POST,
 			consumes = MediaType.APPLICATION_JSON_VALUE,

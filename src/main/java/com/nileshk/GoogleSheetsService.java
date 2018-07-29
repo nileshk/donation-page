@@ -18,7 +18,8 @@ import com.google.api.services.sheets.v4.model.*;
 import com.google.api.services.sheets.v4.Sheets;
 import com.paypal.api.payments.Payment;
 import com.stripe.model.Charge;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -43,7 +44,7 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 @Service
 public class GoogleSheetsService implements PaymentPostProcessor {
 
-	private static final Logger logger = Logger.getLogger(GoogleSheetsService.class);
+	private static final Logger logger = LogManager.getLogger(GoogleSheetsService.class);
 
 	/**
 	 * Application name.

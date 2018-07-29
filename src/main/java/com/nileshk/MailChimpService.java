@@ -7,7 +7,8 @@ import com.ecwid.maleorang.method.v3_0.lists.members.EditMemberMethod;
 import com.ecwid.maleorang.method.v3_0.lists.members.MemberInfo;
 import com.paypal.api.payments.Payment;
 import com.stripe.model.Charge;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Service
 public class MailChimpService implements PaymentPostProcessor {
 
-	private static final Logger logger = Logger.getLogger(MailChimpService.class);
+	private static final Logger logger = LogManager.getLogger(MailChimpService.class);
 
 	@Value("${mailchimp.apiKey:}")
 	String apiKey;
