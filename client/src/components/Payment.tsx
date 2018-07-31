@@ -1,6 +1,5 @@
 import axios from "axios";
 import * as React from "react";
-import {log} from "util";
 
 interface AppConfig {
   mainPageUrl?: string;
@@ -135,12 +134,12 @@ export default class Payment extends React.Component<{}, State> {
       // @ts-ignore
       $('#alertOccupation').removeClass("hidden");
       shouldReturn = true;
-      log('Occupation not provided');
+      this.log('Occupation not provided');
     } else {
       // @ts-ignore
       $('#alertOccupation').addClass("hidden");
       if (!Payment.isEmpty(occupation)) {
-        log("Occupation: " + occupation);
+        this.log("Occupation: " + occupation);
       }
     }
     if (app.donationLimit > 0 && submittedAmount > (app.donationLimit * 100)) {
@@ -150,7 +149,7 @@ export default class Payment extends React.Component<{}, State> {
       // @ts-ignore
       $('#alertCustomDonation').removeClass("hidden");
       shouldReturn = true;
-      log(donationLimitErrorText);
+      this.log(donationLimitErrorText);
     } else {
       // @ts-ignore
       $('#alertCustomDonation').addClass("hidden");
@@ -167,7 +166,7 @@ export default class Payment extends React.Component<{}, State> {
       // $('.donation-selection').hide();
       // @ts-ignore
       $('#multi-pay-options').modal();
-      log('Showing multiple pay options');
+      this.log('Showing multiple pay options');
     }
   }
 
@@ -197,7 +196,7 @@ export default class Payment extends React.Component<{}, State> {
       description: 'Donate $' + this.state.submittedAmountStr,
       amount: this.state.submittedAmount
     });
-    log('Doing credit card donate');
+    this.log('Doing credit card donate');
   };
 
   private hideMultiPay = () => {
