@@ -5,7 +5,7 @@ interface AppConfig {
   mainPageUrl?: string;
   siteTitle?: string;
   appPreviewImageUrl?: string;
-  publishableKey?: string;
+  publishableKey: string;
   organizationDisplayName?: string;
   applePayEnabled?: boolean;
   clientLoggingEnabled?: boolean;
@@ -20,6 +20,7 @@ interface AppConfig {
 
 interface State {
   appConfig: AppConfig;
+  testMode: boolean;
   stripeHandler: any;
   submittedAmount: number;
   submittedAmountStr: string;
@@ -32,7 +33,8 @@ export default class Payment extends React.Component<{}, State> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      appConfig: {donationLimit: 0, collectOccupationThreshold: 100},
+      appConfig: {publishableKey: '', donationLimit: 0, collectOccupationThreshold: 100},
+      testMode: false,
       stripeHandler: null,
       submittedAmount: 0,
       submittedAmountStr: '0',
@@ -107,7 +109,12 @@ export default class Payment extends React.Component<{}, State> {
       token: tokenFunc
     });
 
-    this.setState({appConfig: app, stripeHandler: handler});
+    const testMode: boolean = app.publishableKey.startsWith('pk_test');
+    if (testMode) {
+      console.log("TEST MODE - No money will be transferred");
+    };
+
+    this.setState({appConfig: app, testMode, stripeHandler: handler});
   };
 
   private static isEmpty(str: string) {
@@ -247,7 +254,9 @@ export default class Payment extends React.Component<{}, State> {
 
     return (
       <div className="container">
-        <div id="alertTop" className="alert-top" role="alert"/>
+        { this.state.testMode ?
+          <div id="alertTop" className="alert-top alert alert-danger" role="alert">! TEST MODE - No money will be transferred !</div>
+        : ''}
         <div className="donation-selection">
           <div className="well well-sm" style={{textAlign: 'center'}}>
             <h4 className="display-3">Contribute to</h4>
@@ -356,7 +365,7 @@ export default class Payment extends React.Component<{}, State> {
                       <br/>
                     </div>
                     : ""}
-                  <button id="credit-pay-button" type="button" className="credit-pay-button btn btn-default" aria-label="Center Align">
+                  <button id="credit-pay-button" type="button" className="credit-pay-button btn btn-default" aria-label="Center Align" onClick={(e) => this.doCreditCardDonate()}>
                     <span className="glyphicon glyphicon-credit-card" aria-hidden="true"/>
                     Credit Card
                   </button>
