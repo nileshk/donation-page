@@ -1,5 +1,6 @@
 import axios from "axios";
 import * as React from "react";
+import {log} from "util";
 
 interface AppConfig {
   mainPageUrl?: string;
@@ -10,8 +11,8 @@ interface AppConfig {
   applePayEnabled?: boolean;
   clientLoggingEnabled?: boolean;
   collectOccupationEnabled?: boolean;
-  collectOccupationThreshold?: boolean;
-  donationLimit?: number;
+  collectOccupationThreshold: number;
+  donationLimit: number;
   paypalEnabled?: boolean;
   paypalSandbox?: boolean;
   emailSignupUrl?: string;
@@ -19,26 +20,224 @@ interface AppConfig {
 }
 
 interface State {
-  appConfig: AppConfig
+  appConfig: AppConfig;
+  stripeHandler: any;
+  submittedAmount: number;
+  submittedAmountStr: string;
+  occupation: string;
+  pagePurpose: string;
+  stripePaymentsBaseUrl: string;
 }
 
 export default class Payment extends React.Component<{}, State> {
   constructor(props: {}) {
     super(props);
-    this.state = {appConfig: {}};
+    this.state = {
+      appConfig: {donationLimit: 0, collectOccupationThreshold: 100},
+      stripeHandler: null,
+      submittedAmount: 0,
+      submittedAmountStr: '0',
+      occupation: '',
+      pagePurpose: 'donation',
+      stripePaymentsBaseUrl: ''
+    };
   }
 
   public componentDidMount() {
     axios.get('getConfig')
       .then(res => {
         const data: AppConfig = res.data;
-        this.setState({appConfig: data});
+        this.init(data);
       })
   }
 
-  private handleDonate(cents: number, dollars: string) {
-    return undefined;
+  private init = (app: AppConfig) => {
+    // @ts-ignore
+    Stripe.setPublishableKey(app.publishableKey);
+    const stripePaymentsBaseUrl = this.state.stripePaymentsBaseUrl;
+
+    const that: any = this;
+
+    const tokenFunc = (token: any) => {
+      // You can access the token ID with `token.id`.
+      // Get the token ID to your server-side code for use.
+      const param = {
+        id: token.id,
+        currency: 'usd',
+        amount: that.state.submittedAmount,
+        description: token.email,
+        occupation: that.state.occupation,
+        collectOccupationEnabled: app.collectOccupationEnabled,
+        pagePurpose: that.state.pagePurpose,
+        token
+      };
+      // console.log(param);
+      // @ts-ignore
+      $('#processingPaymentDialog').modal();
+      // @ts-ignore
+      $.ajax({
+        type: 'POST',
+        url: stripePaymentsBaseUrl + 'submitPayment',
+        data: JSON.stringify(param),
+        contentType: "application/json",
+        dataType: 'json'
+      }).done((data: any) => {
+        that.hideProcessingPayment();
+        // console.log(data);
+        if (!data.error) {
+          that.doSuccess(data.amount, data.email);
+        } else {
+          that.errorDialog(data.errorMessage);
+        }
+      }).fail((jqXHR: any, textStatus: any, errorThrown: any) => {
+        that.hideProcessingPayment();
+        that.errorDialog(textStatus + ": " + errorThrown);
+      }).always(() => {
+        that.hideProcessingPayment();
+      });
+    };
+
+    // @ts-ignore
+    const handler = StripeCheckout.configure({
+      key: app.publishableKey,
+      image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+      locale: 'auto',
+      currency: 'usd',
+      billingAddress: true,
+      allowRememberMe: true,
+      token: tokenFunc
+    });
+
+    this.setState({appConfig: app, stripeHandler: handler});
+  };
+
+  private static isEmpty(str: string) {
+    return (!str || 0 === str.length);
   }
+
+  private handleDonate(amount: number, amountStr: string) {
+    // Open Checkout with further options:
+    const submittedAmount: number = amount;
+    const submittedAmountStr: string = amountStr;
+
+    // @ts-ignore
+    const occupation: string = $('#occupationInput').val();
+
+    this.setState({submittedAmount, submittedAmountStr, occupation});
+
+    let shouldReturn = false;
+    this.log('Selected amount: $' + submittedAmountStr);
+
+    const app = this.state.appConfig;
+    if (app.collectOccupationEnabled && submittedAmount > (app.collectOccupationThreshold * 100) && Payment.isEmpty(occupation)) {
+      // @ts-ignore
+      $('#alertOccupationText').text("Please provide your occupation");
+      // @ts-ignore
+      $('#alertOccupation').removeClass("hidden");
+      shouldReturn = true;
+      log('Occupation not provided');
+    } else {
+      // @ts-ignore
+      $('#alertOccupation').addClass("hidden");
+      if (!Payment.isEmpty(occupation)) {
+        log("Occupation: " + occupation);
+      }
+    }
+    if (app.donationLimit > 0 && submittedAmount > (app.donationLimit * 100)) {
+      const donationLimitErrorText = "Donation exceeds limit of $" + app.donationLimit + ".";
+      // @ts-ignore
+      $('#alertCustomDonationText').text(donationLimitErrorText);
+      // @ts-ignore
+      $('#alertCustomDonation').removeClass("hidden");
+      shouldReturn = true;
+      log(donationLimitErrorText);
+    } else {
+      // @ts-ignore
+      $('#alertCustomDonation').addClass("hidden");
+    }
+    if (shouldReturn) {
+      return;
+    }
+
+    if (!app.applePayEnabled && !app.paypalEnabled) {
+      this.doCreditCardDonate();
+    } else {
+      // @ts-ignore
+      $('#donationAmountAlert').text("Amount: $" + submittedAmountStr);
+      // $('.donation-selection').hide();
+      // @ts-ignore
+      $('#multi-pay-options').modal();
+      log('Showing multiple pay options');
+    }
+  }
+
+  // @ts-ignore
+  private hideProcessingPayment = () => {
+    // @ts-ignore
+    $('#processingPaymentDialog').modal('hide');
+  };
+
+  // @ts-ignore
+  private errorDialog = (errorMessage) => {
+    this.hideProcessingPayment();
+    // @ts-ignore
+    $("#errorMessage").text(errorMessage);
+    // @ts-ignore
+    $('#errorDialog').modal();
+    this.hideMultiPay();
+    // @ts-ignore
+    $('.donation-selection').show();
+  };
+
+  private doCreditCardDonate = () => {
+    this.hideMultiPay();
+    const app = this.state.appConfig;
+    this.state.stripeHandler.open({
+      name: app.organizationDisplayName,
+      description: 'Donate $' + this.state.submittedAmountStr,
+      amount: this.state.submittedAmount
+    });
+    log('Doing credit card donate');
+  };
+
+  private hideMultiPay = () => {
+    // @ts-ignore
+    $('#multi-pay-options').modal('hide');
+  };
+
+  // @ts-ignore
+  private doSuccess = (amount, email) => {
+    let loc = "successfulPayment?amount=" + amount;
+    if (email) {
+      loc += "&email=" + email;
+    }
+    // @ts-ignore
+    window.location = loc;
+  };
+
+  private log = (logObject: any) => {
+    setTimeout(() => {
+      if (this.state.appConfig.clientLoggingEnabled) {
+        // @ts-ignore
+        $.ajax({
+          type: 'POST',
+          url: this.state.stripePaymentsBaseUrl + 'log',
+          data: JSON.stringify(logObject),
+          contentType: "application/json",
+          dataType: 'json'
+        }).fail((jqXHR: any, textStatus: any, errorThrown: any) => {
+          if (window.console) {
+            console.log(textStatus + ": " + errorThrown);
+            console.log("Failed to log: ");
+            console.log(logObject);
+          }
+        });
+      }
+      if (window.console) {
+        console.log(logObject);
+      }
+    }, 10);
+  };
 
   public render() {
     const app = this.state.appConfig;
@@ -76,16 +275,16 @@ export default class Payment extends React.Component<{}, State> {
           <div>
             <h5>Amount:</h5>
             <div className="row express-button-row">
-              <button id="donateButton_5" className="col-sm-1 btn btn-primary express-button" onClick={this.handleDonate(500, '5')}>$5</button>
-              <button id="donateButton_10" className="col-sm-1 btn btn-primary express-button" onClick={this.handleDonate(1000, '10')}>$10</button>
-              <button id="donateButton_18" className="col-sm-1 btn btn-primary express-button" onClick={this.handleDonate(1800, '18')}>$18</button>
-              <button id="donateButton_27" className="col-sm-1 btn btn-primary express-button" onClick={this.handleDonate(2700, '27')}>$27</button>
+              <button id="donateButton_5" className="col-sm-1 btn btn-primary express-button" onClick={(e) => this.handleDonate(500, '5')}>$5</button>
+              <button id="donateButton_10" className="col-sm-1 btn btn-primary express-button" onClick={(e) => this.handleDonate(1000, '10')}>$10</button>
+              <button id="donateButton_18" className="col-sm-1 btn btn-primary express-button" onClick={(e) => this.handleDonate(1800, '18')}>$18</button>
+              <button id="donateButton_27" className="col-sm-1 btn btn-primary express-button" onClick={(e) => this.handleDonate(2700, '27')}>$27</button>
             </div>
             <div className="row express-button-row">
-              <button id="donateButton_50" className="col-sm-1 btn btn-primary express-button" onClick={this.handleDonate(5000, '50')}>$50</button>
-              <button id="donateButton_100" className="col-sm-1 btn btn-primary express-button" onClick={this.handleDonate(10000, '100')}>$100</button>
-              <button id="donateButton_200" className="col-sm-1 btn btn-primary express-button" onClick={this.handleDonate(20000, '200')}>$200</button>
-              <button id="donateButton_300" className="col-sm-1 btn btn-primary express-button" onClick={this.handleDonate(30000, '300')}>$300</button>
+              <button id="donateButton_50" className="col-sm-1 btn btn-primary express-button" onClick={(e) => this.handleDonate(5000, '50')}>$50</button>
+              <button id="donateButton_100" className="col-sm-1 btn btn-primary express-button" onClick={(e) => this.handleDonate(10000, '100')}>$100</button>
+              <button id="donateButton_200" className="col-sm-1 btn btn-primary express-button" onClick={(e) => this.handleDonate(20000, '200')}>$200</button>
+              <button id="donateButton_300" className="col-sm-1 btn btn-primary express-button" onClick={(e) => this.handleDonate(30000, '300')}>$300</button>
             </div>
           </div>
 
@@ -152,15 +351,17 @@ export default class Payment extends React.Component<{}, State> {
                 <div className="modal-header">
                   <h3 style={{textAlign: 'center'}}>Choose payment method</h3>
                   <br/>
-                  <div className="apple-pay-container">
-                    <button id="apple-pay-button" className="apple-pay-button"/>
-                    <br/>
-                  </div>
+                  {app.applePayEnabled ?
+                    <div className="apple-pay-container">
+                      <button id="apple-pay-button" className="apple-pay-button"/>
+                      <br/>
+                    </div>
+                    : ""}
                   <button id="credit-pay-button" type="button" className="credit-pay-button btn btn-default" aria-label="Center Align">
                     <span className="glyphicon glyphicon-credit-card" aria-hidden="true"/>
                     Credit Card
                   </button>
-                  {app.applePayEnabled ?
+                  {app.paypalEnabled ?
                     <div>
                       <br/>
                       <div id="paypal-button-container"/>
