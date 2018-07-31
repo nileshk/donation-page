@@ -232,9 +232,20 @@ public class PaymentController {
 	@ResponseBody
 	public ClientConfig getClientConfig(HttpServletRequest request) {
 		ClientConfig config = new ClientConfig();
+		config.setMainPageUrl(mainPageUrl);
+		config.setSiteTitle(siteTitle);
+		config.setAppPreviewImageUrl(appPreviewImageUrl);
 		config.setPublishableKey(publishableKey);
 		config.setOrganizationDisplayName(organizationDisplayName);
 		config.setApplyPayEnabled(applePayEnabled);
+		config.setClientLoggingEnabled(clientLoggingEnabled);
+		config.setCollectOccupationEnabled(collectOccupationEnabled);
+		config.setCollectOccupationThreshold(collectOccupationThreshold);
+		config.setDonationLimit(donationLimit);
+		config.setPaypalEnabled(paypalEnabled);
+		config.setPaypalSandbox(paypalSandbox);
+		config.setEmailSignupUrl(emailSignupUrl);
+		config.setVcsBuildId(vcsBuildId);
 		if (request != null && request.getSession(true) != null) {
 			HttpSession session = request.getSession(true);
 			if (session != null) {

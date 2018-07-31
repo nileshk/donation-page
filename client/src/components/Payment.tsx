@@ -2,9 +2,20 @@ import axios from "axios";
 import * as React from "react";
 
 interface AppConfig {
-  publishableKey?: string,
-  organizationDisplayName?: string
-  applePayEnabled?: boolean
+  mainPageUrl?: string;
+ 	siteTitle?: string;
+ 	appPreviewImageUrl?: string;
+  publishableKey?: string;
+  organizationDisplayName?: string;
+  applePayEnabled?: boolean;
+  clientLoggingEnabled?: boolean;
+ 	collectOccupationEnabled?: boolean;
+ 	collectOccupationThreshold?: boolean;
+ 	donationLimit?: number;
+ 	paypalEnabled?: boolean;
+ 	paypalSandbox?: boolean;
+ 	emailSignupUrl?: string;
+ 	vcsBuildId?: string;
 }
 
 interface State {
