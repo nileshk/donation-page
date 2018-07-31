@@ -376,7 +376,7 @@ export default class Payment extends React.Component<{}, State> {
                     </div>
                     : ""}
                   <br/>
-                  <button id="cancel-button" type="button" className="credit-pay-button btn btn-default" aria-label="Center Align">
+                  <button id="cancel-button" type="button" className="credit-pay-button btn btn-default" aria-label="Center Align" onClick={(e) => this.hideMultiPay()}>
                     Cancel
                   </button>
                   <br/>
