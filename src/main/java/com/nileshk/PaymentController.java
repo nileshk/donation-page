@@ -120,6 +120,15 @@ public class PaymentController {
 	@Value("${app.googleAnalyticsTrackingId:}")
 	private String googleAnalyticsTrackingId;
 
+	@Value("${app.donationPostUrl:}")
+	private String donationPostUrl;
+
+	@Value("${app.duesPostUrl:}")
+	private String duesPostUrl;
+
+	@Value("${app.payPostUrl:}")
+	private String payPostUrl;
+
 	@Value("${vcs.build.id}")
 	private String vcsBuildId;
 
@@ -426,10 +435,31 @@ public class PaymentController {
 	public String successfulPayment(
 			@RequestParam(value = "amount", required = true) Long amount,
 			@RequestParam(value = "email", required = false, defaultValue = "") String email,
+			@RequestParam(value = "purpose", required = false, defaultValue = "") String purpose,
 			Model model) {
+		if (isNotBlank(purpose)) {
+			switch (purpose) {
+				case PaymentContants.DONATION_PURPOSE:
+					if (isNotBlank(donationPostUrl)) {
+						return redirectForPostUrl(donationPostUrl, amount, email, purpose);
+					}
+					break;
+				case PaymentContants.DUES_PURPOSE:
+					if (isNotBlank(duesPostUrl)) {
+						return redirectForPostUrl(duesPostUrl, amount, email, purpose);
+					}
+					break;
+				case PaymentContants.PAY_PURPOSE:
+					if (isNotBlank(payPostUrl)) {
+						return redirectForPostUrl(payPostUrl, amount, email, purpose);
+					}
+					break;
+			}
+		}
 		defaultModel(model);
 		model.addAttribute("amount", String.valueOf(amount / 100));
 		model.addAttribute("email", email);
+		model.addAttribute("purpose", purpose);
 		try {
 			model.addAttribute("email_urlEncoded", URLEncoder.encode(email, "UTF-8"));
 		} catch (UnsupportedEncodingException e) {
@@ -437,6 +467,26 @@ public class PaymentController {
 		}
 		model.addAttribute("emailSignupUrl", emailSignupUrl);
 		return "successful_payment";
+	}
+
+	@NotNull private String redirectForPostUrl(String url, Long amount, String email, String purpose) {
+		try {
+			if (url != null) {
+				if (isNotBlank(email) && url.contains("{email}")) {
+					url = url.replace("{email}", URLEncoder.encode(email, "UTF-8"));
+				}
+				if (isNotBlank(purpose) && url.contains("{purpose}")) {
+					url = url.replace("{purpose}", URLEncoder.encode(purpose, "UTF-8"));
+				}
+				if (amount != null && url.contains("{amount}")) {
+					url = url.replace("{amount}", URLEncoder.encode(String.valueOf(amount/100), "UTF-8"));
+				}
+				return "redirect:" + url;
+			}
+		} catch (UnsupportedEncodingException e) {
+			logger.error("Failed encoding URL for postUrl", e);
+		}
+		return "";
 	}
 
 }
