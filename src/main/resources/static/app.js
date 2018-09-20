@@ -66,6 +66,9 @@ function init(publishableKey, organizationDisplayName, applyPayEnabledConfigured
 		if (email) {
 			loc += "&email=" + email;
 		}
+		if (pagePurpose) {
+			loc += "&purpose=" + pagePurpose;
+		}
 		window.location = loc;
 	}
 
