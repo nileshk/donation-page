@@ -2,7 +2,8 @@ package com.nileshk;
 
 import com.paypal.api.payments.Payment;
 import com.stripe.model.Charge;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +13,7 @@ import java.util.Map;
 @Component
 public class ProcessorsImpl implements Processors {
 
-	private static final Logger logger = Logger.getLogger(ProcessorsImpl.class);
+	private static final Logger logger = LogManager.getLogger(ProcessorsImpl.class);
 
 	final List<PaymentPostProcessor> paymentPostProcessors;
 
