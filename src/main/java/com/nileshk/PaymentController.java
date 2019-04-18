@@ -11,11 +11,10 @@ import com.paypal.api.payments.Transaction;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 import com.stripe.Stripe;
-import com.stripe.exception.APIConnectionException;
-import com.stripe.exception.APIException;
 import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.CardException;
 import com.stripe.exception.InvalidRequestException;
+import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -331,14 +330,11 @@ public class PaymentController {
 		} catch (InvalidRequestException e) {
 			logger.error("InvalidRequestException", e);
 			return ChargeResult.error(e.getMessage());
-		} catch (APIConnectionException e) {
-			logger.error("APIConnectionException", e);
-			return ChargeResult.error(e.getMessage());
 		} catch (CardException e) {
 			logger.error("CardException", e);
 			return ChargeResult.error(e.getMessage());
-		} catch (APIException e) {
-			logger.error("APIException", e);
+		} catch (StripeException e) {
+			logger.error("StripeException", e);
 			return ChargeResult.error(e.getMessage());
 		} catch (RuntimeException e) {
 			logger.error("RuntimeException", e);
