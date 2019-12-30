@@ -116,6 +116,9 @@ public class PaymentController {
 	@Value("${app.donationLimit:-1}")
 	private Integer donationLimit;
 
+	@Value("${app.duesYear:2020}")
+	private String duesYear;
+
 	@Value("${app.googleAnalyticsTrackingId:}")
 	private String googleAnalyticsTrackingId;
 
@@ -172,6 +175,7 @@ public class PaymentController {
 		model.addAttribute(COLLECT_OCCUPATION_ENABLED_KEY, collectOccupationEnabled);
 		model.addAttribute("collectOccupationThreshold", collectOccupationThreshold);
 		model.addAttribute("donationLimit", donationLimit);
+		model.addAttribute("duesYear", duesYear);
 		model.addAttribute("pagePurpose", PaymentContants.DONATION_PURPOSE);
 		model.addAttribute("pagePurposeText", "Contribute to");
 		if (isNotBlank(googleAnalyticsTrackingId)) {

@@ -101,6 +101,11 @@
       "description": "Limit donations to a specified dollar amount (disabled by default by being set to -1)"
     },
     {
+      "name": "app.duesYear",
+      "type": "java.lang.String",
+      "description": "Dues Year"
+    },
+    {
       "name": "app.googleAnalyticsTrackingId",
       "type": "java.lang.String",
       "description": "Google Analytics Tracking Id (populating this enables Google Analytics)."

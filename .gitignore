@@ -25,3 +25,4 @@ nbdist/
 keystore.p12
 client_secret.json
 *.sqlite
+client/node_modules

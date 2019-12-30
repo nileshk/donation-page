@@ -53,6 +53,7 @@ See a live version of it here:
   * **app.collectOccupationEnabled** - If `true`, collect contributor's occupation. Default is `true`.
   * **app.collectOccupationThreshold** - If contribution amount (in dollars) exceeds this value, occupation is required (if app.collectOccupationEnabled = `true`).
   * **app.donationLimit** - Limit donations to a specified dollar amount (disabled by default by being set to -1)
+  * **app.duesYear** - Dues Year
   * **app.googleAnalyticsTrackingId** - Google Analytics Tracking Id (populating this enables Google Analytics).
   * **app.googleSheetId** - Google Sheet Id to write log to (populating this enables it). **WORK IN PROGRESS**
   * **app.clientLoggingEnabled** - Log client messages to server. Default is `true`.
